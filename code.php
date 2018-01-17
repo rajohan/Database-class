@@ -142,9 +142,9 @@
     }
 
 
-    /* $data = "86";
+    /* $data = 86;
     $db_conn = new Database();
-    if($db_conn->db_delete("users", "id", "s", $data)) {
+    if($db_conn->db_delete("users", "id", "i", $data)) {
         echo "ok!";
     }
     else {
