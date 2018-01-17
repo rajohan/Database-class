@@ -127,7 +127,7 @@
             $stmt = $this->connect->prepare("DELETE FROM $db_table WHERE $where"); // prepare statement
             $stmt->bind_param($identifier, $variable); // bind parameters 
             
-            // update database
+            // delete from database
             if($stmt->execute()) {
                 $this->close_connection($stmt); // Close connection
                 return true;
