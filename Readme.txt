@@ -19,3 +19,5 @@ DB DELETE
 $db_table = database table | $where = table row identifier 
 $identifier = variable identifier | $variable = value of the $where 
 EX: db_delete('users', 'id', 'i', 86);
+
+Licensed under the MIT License.
