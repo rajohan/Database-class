@@ -141,15 +141,6 @@
 
     }
 
-
-    /* $data = 86;
-    $db_conn = new Database();
-    if($db_conn->db_delete("users", "id", "i", $data)) {
-        echo "ok!";
-    }
-    else {
-        echo "error!";
-    }*/
 ?>
 
 
