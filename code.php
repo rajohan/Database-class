@@ -7,16 +7,27 @@
         function __construct() {
 
             if (!defined('DB_HOST')) { 
+                
                 define('DB_HOST','localhost');
+                
             }
+            
             if (!defined('DB_USER')) {
+                
                 define('DB_USER','username');
+                
             }
+            
             if (!defined('DB_PASS')) {
+                
                 define('DB_PASS','password');
+                
             }
+            
             if (!defined('DB_NAME')) { 
+                
                 define('DB_NAME','db_name'); 
+                
             }
 
             $this->connect = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -27,11 +38,13 @@
         // Method to generate placeholders based on identifiers
         ////////////////////////////////////////////////////////
         private function placeholders($identifiers) {
+
             $replace = array("i", "d", "s", "m"); // characters to replace
             $replace_with = array("?,", "?,", "?,", "?,"); // characters to replace with
             $placeholders = str_replace($replace, $replace_with, $identifiers); // replace 'i', 'd', 's', 'm' with '?,'
             $placeholders = rtrim($placeholders,", "); // remove last ',';
             return $placeholders;
+
         }
 
 
@@ -39,11 +52,13 @@
         // Method to add placeholders to the inputed db columns
         ////////////////////////////////////////////////////////
         private function placeholders_columns($db_columns) {
+
             $replace = array(","); // characters to replace
             $replace_with = array("=?,"); // characters to replace with
             $db_columns = str_replace($replace, $replace_with, $db_columns); // replace ',' with '=?,'
             $db_columns = rtrim($db_columns,", ")."=?"; // remove last ',' and add "=? at the end";
             return $db_columns;
+
         }
 
 
@@ -51,8 +66,10 @@
         // Method to close connection
         /////////////////////////////////////////////////////////
         private function close_connection($stmt) {
+
             $stmt->close(); // Close statement
             $this->connect->close(); // Close connection
+
         }
 
 
@@ -72,12 +89,15 @@
             
             // insert to database
             if($stmt->execute()) {
+
                 $this->close_connection($stmt); // Close connection
                 return true;
-            }
-            else {
+
+            } else {
+
                 $this->close_connection($stmt); // Close connection
                 return false;
+
             }
 
         }
@@ -102,12 +122,15 @@
             
             // update database
             if($stmt->execute()) {
+
                 $this->close_connection($stmt); // Close connection
                 return true;
-            }
-            else {
+
+            } else {
+
                 $this->close_connection($stmt); // Close connection
                 return false;
+
             }
 
         }
@@ -129,19 +152,19 @@
             
             // delete from database
             if($stmt->execute()) {
+
                 $this->close_connection($stmt); // Close connection
                 return true;
-            }
-            else {
+
+            } else {
+
                 $this->close_connection($stmt); // Close connection
                 return false;
+
             }
 
         }
 
     }
-
+    
 ?>
-
-
-
