@@ -94,75 +94,73 @@ $db->update("users",
 ```
 #### Delete
 ##### Remove one or more rows from a database table
-
 ##### Arguments:
-
-string $table       - Database Table.
-array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
-string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
-array  $dataTypes   - Optional: Pass in data types as an array in equal order to $where.
-                        - Options: int/integer, bool/boolean, str/string.
-                        - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
-
-return boolean      - True = Success, False = Error.
-
+| Parameter | Description |
+|--|--|
+| string $table | Database Table. |
+| array  $where | Optional: Array holding the filters/'WHERE' clause for the query. |
+| string $whereMode | Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND. |
+| array  $dataTypes | Optional: Pass in data types as an array in equal order to $where. |
+| | Options: int/integer, bool/boolean, str/string. |
+| | Data type will default to string if nothing is passed in (PDO::PARAM_STR). |
+| &nbsp; | &nbsp; |
+| return boolean | True = Success, False = Error. |
 ##### Usage:
-
+```php
 $db->delete(string $table, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
-
+```
 ##### Example:
-
+```php
 $db->delete("users",
             Array("id" => 1,
                   "username" => "Rajohan"),
             "OR",
             Array("int", "str"));
-
-
+```
 #### Count
 ##### Get row count from a database table
-
 ##### Arguments:
-
-string $table     - Database Table.
-array  $where     - Optional: Array holding the filters/'WHERE' clause for the query.
-string $whereMode - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
-string $columns   - Optional: the column to select (SELECT count(*) FROM ...), defaults to *.
-array  $dataTypes - Optional: Pass in data types as an array in equal order to the $where.
-                      - Options: int/integer, bool/boolean, str/string.
-                      - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
-
-return integer    - Row count.
+| Parameter | Description |
+|--|--|
+| string $table | Database Table. |
+| array  $where | Optional: Array holding the filters/'WHERE' clause for the query. |
+| string $whereMode | Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND. |
+| string $columns | Optional: the column to select (SELECT count(*) FROM ...), defaults to *. |
+| array  $dataTypes | Optional: Pass in data types as an array in equal order to the $where. |
+| | Options: int/integer, bool/boolean, str/string. |
+| | Data type will default to string if nothing is passed in (PDO::PARAM_STR). |
+| &nbsp; | &nbsp; |
+| return integer | Row count. |
 
 ##### Usage:
-
+```php
 $db->count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[]);
-
-Example:
-
+```
+##### Example:
+```php
 $db->count("users",
            Array("id" => 1,
            "firstName" => "Raymond"),
            "OR",
            "*",
            Array("int", "str"));
-
+```
 #### Id
 ##### Last inserted row's id
-
 ##### Usage:
+```php
 $db->id();
-
+```
 #### Sql
 ##### Get last used query
-
 ##### Usage:
+```php
 $db->sql();
-
+```
 #### CloseConnection
 ##### Close the database connection
-
 ##### Usage:
+```php
 $db->closeConnection();
-
+```
 #### Licensed under the MIT License.
