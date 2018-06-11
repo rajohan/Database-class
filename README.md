@@ -61,6 +61,9 @@ $db->insert("users",
 ```
 ### Update
 ##### Update one or more rows of a database table
+```php
+$db->update(string $table, array $columnsData, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
+```
 ##### Arguments:
 | Parameter | Description |
 |--|--|
@@ -73,11 +76,6 @@ $db->insert("users",
 | | Data type will default to string if nothing is passed in (PDO::PARAM_STR). |
 | &nbsp; | &nbsp; |
 | return boolean | True = Success, False = Error. |
-
-##### Usage:
-```php
-$db->update(string $table, array $columnsData, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
-```
 ##### Example:
 ```php
 $db->update("users",
@@ -89,8 +87,11 @@ $db->update("users",
             "OR",
             Array("str", "str", "str", "int", "str"));
 ```
-#### Delete
+### Delete
 ##### Remove one or more rows from a database table
+```php
+$db->delete(string $table, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
+```
 ##### Arguments:
 | Parameter | Description |
 |--|--|
@@ -102,10 +103,6 @@ $db->update("users",
 | | Data type will default to string if nothing is passed in (PDO::PARAM_STR). |
 | &nbsp; | &nbsp; |
 | return boolean | True = Success, False = Error. |
-##### Usage:
-```php
-$db->delete(string $table, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
-```
 ##### Example:
 ```php
 $db->delete("users",
@@ -114,8 +111,11 @@ $db->delete("users",
             "OR",
             Array("int", "str"));
 ```
-#### Count
+### Count
 ##### Get row count from a database table
+```php
+$db->count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[]);
+```
 ##### Arguments:
 | Parameter | Description |
 |--|--|
@@ -128,11 +128,6 @@ $db->delete("users",
 | | Data type will default to string if nothing is passed in (PDO::PARAM_STR). |
 | &nbsp; | &nbsp; |
 | return integer | Row count. |
-
-##### Usage:
-```php
-$db->count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[]);
-```
 ##### Example:
 ```php
 $db->count("users",
@@ -144,19 +139,16 @@ $db->count("users",
 ```
 #### Id
 ##### Last inserted row's id
-##### Usage:
 ```php
 $db->id();
 ```
 #### Sql
 ##### Get last used query
-##### Usage:
 ```php
 $db->sql();
 ```
 #### CloseConnection
 ##### Close the database connection
-##### Usage:
 ```php
 $db->closeConnection();
 ```
