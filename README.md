@@ -13,7 +13,6 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
             string $order="",string $limit="", array $dataTypes=[], string $returnType="object", 
             string $returnClass="");
 ```
-##### Arguments:
 | Parameter | Description |
 |--|--|
 | string $table | Database Table. |
@@ -41,7 +40,6 @@ $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR",
 ```php
 $db->insert(string $table, Array $columnsData, Array $dataTypes=[]);
 ```
-##### Arguments:
 | Parameter | Description |
 |--|--|
 | string $table | Database Table. |
@@ -65,7 +63,6 @@ $db->insert("users",
 $db->update(string $table, array $columnsData, array $where=[], 
             string $whereMode="AND", Array $dataTypes=[]);
 ```
-##### Arguments:
 | Parameter | Description |
 |--|--|
 | string $table | Database Table.|
@@ -93,7 +90,6 @@ $db->update("users",
 ```php
 $db->delete(string $table, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
 ```
-##### Arguments:
 | Parameter | Description |
 |--|--|
 | string $table | Database Table. |
@@ -117,7 +113,6 @@ $db->delete("users",
 ```php
 $db->count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[]);
 ```
-##### Arguments:
 | Parameter | Description |
 |--|--|
 | string $table | Database Table. |
