@@ -1,7 +1,5 @@
 # Database.php
 
-## Usage
-
 #### Initiating
 ##### Initiate a database connection by creating a new Database() object.
 
@@ -41,14 +39,14 @@ return mixed        - Returns as object, class or array based on $returnType cho
 $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR", "ORDER BY ID ASC", "LIMIT 5",
             array("int", "str"), "Class", "TestClass");
 
-### Insert
-#### Insert data into a database table
+#### Insert
+##### Insert data into a database table
 
-#### Usage:
+##### Usage:
 
 $db->insert(string $table, Array $columnsData, Array $dataTypes=[]);
 
-#### Arguments:
+##### Arguments:
 
 string $table       - Database Table.
 array  $columnsData - Array of columns and data to insert to the assign columns.
@@ -58,7 +56,7 @@ array  $dataTypes   - Optional: Pass in data types as an array in equal order to
 
 return boolean      - True = Success, False = Error.
 
-#### Example:
+##### Example:
 
 $db->insert("users",
             Array("firstName" => "Raymond",
@@ -67,10 +65,11 @@ $db->insert("users",
             Array("str", "str", "str"));
 
 
-Update
-Update one or more rows of a database table
+#### Update
+##### Update one or more rows of a database table
 
-Arguments:
+##### Arguments:
+
 string $table       - Database Table.
 array  $columnsData - Array of columns and data to insert to the assign columns.
 array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
@@ -81,11 +80,11 @@ array  $dataTypes   - Optional: Pass in data types as an array in equal order to
 
 return boolean      - True = Success, False = Error.
 
-Usage:
+##### Usage:
 
 $db->update(string $table, array $columnsData, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
 
-Example:
+##### Example:
 
 
 $db->update("users",
@@ -98,10 +97,10 @@ $db->update("users",
             Array("str", "str", "str", "int", "str"));
 
 
-Delete
-Remove one or more rows from a database table
+#### Delete
+##### Remove one or more rows from a database table
 
-Arguments:
+##### Arguments:
 
 string $table       - Database Table.
 array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
@@ -112,11 +111,11 @@ array  $dataTypes   - Optional: Pass in data types as an array in equal order to
 
 return boolean      - True = Success, False = Error.
 
-Usage:
+##### Usage:
 
 $db->delete(string $table, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
 
-Example:
+##### Example:
 
 $db->delete("users",
             Array("id" => 1,
@@ -125,10 +124,10 @@ $db->delete("users",
             Array("int", "str"));
 
 
-Count
-Get row count from a database table
+#### Count
+##### Get row count from a database table
 
-Arguments:
+##### Arguments:
 
 string $table     - Database Table.
 array  $where     - Optional: Array holding the filters/'WHERE' clause for the query.
@@ -140,7 +139,7 @@ array  $dataTypes - Optional: Pass in data types as an array in equal order to t
 
 return integer    - Row count.
 
-Usage:
+##### Usage:
 
 $db->count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[]);
 
@@ -153,22 +152,22 @@ $db->count("users",
            "*",
            Array("int", "str"));
 
-Id
-Last inserted row's id
+#### Id
+##### Last inserted row's id
 
-Usage:
+##### Usage:
 $db->id();
 
-Sql
-Get last used query
+#### Sql
+##### Get last used query
 
-Usage:
+##### Usage:
 $db->sql();
 
-CloseConnection
-Close the database connection
+#### CloseConnection
+##### Close the database connection
 
-Usage:
+##### Usage:
 $db->closeConnection();
 
-Licensed under the MIT License.
+#### Licensed under the MIT License.
