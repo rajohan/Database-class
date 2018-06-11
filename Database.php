@@ -46,7 +46,7 @@ class Database
         if(!isset(self::$connectionInstance)) {
             try {
                 self::$connectionInstance = new PDO("mysql:host=" . self::HOST . "; dbname=" . self::DB_NAME, self::USERNAME, self::PASSWORD);
-                self::$connectionInstance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                self::$connectionInstance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
             } catch (PDOException $exception) {
                 echo $exception->getMessage();
             }
