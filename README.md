@@ -1,7 +1,9 @@
-##Usage##
+# Database.php
 
-Initiating
-Initiate a database connection by creating a new Database() object.
+## Usage
+
+### Initiating
+#### Initiate a database connection by creating a new Database() object.
 
 require_once('Database.php');
 $db = new Database();
@@ -9,12 +11,12 @@ $db = new Database();
 Select
 Select rows from a database table
 
-Usage:
+#### Usage:
 
 $db->select(string $table, array $where=[], string $columns="*", string $whereMode="AND", string $order="",
             string $limit="", array $dataTypes=[], string $returnType="object", string $returnClass="");
 
-Arguments:
+#### Arguments:
 
 string $table       - Database Table.
 array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
@@ -32,19 +34,19 @@ string $returnClass - Optional: Class to return data as when class is chosen as 
 
 return mixed        - Returns as object, class or array based on $returnType choice.
 
-Example:
+#### Example:
 
 $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR", "ORDER BY ID ASC", "LIMIT 5",
             array("int", "str"), "Class", "TestClass");
 
-Insert
-Insert data into a database table
+### Insert
+#### Insert data into a database table
 
-Usage:
+#### Usage:
 
 $db->insert(string $table, Array $columnsData, Array $dataTypes=[]);
 
-Arguments:
+#### Arguments:
 
 string $table       - Database Table.
 array  $columnsData - Array of columns and data to insert to the assign columns.
@@ -54,7 +56,7 @@ array  $dataTypes   - Optional: Pass in data types as an array in equal order to
 
 return boolean      - True = Success, False = Error.
 
-Example:
+#### Example:
 
 $db->insert("users",
             Array("firstName" => "Raymond",
