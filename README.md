@@ -4,7 +4,7 @@ This is my Database class to make it easier to do standard CRUD database operati
 
 As establishing a connection with a database can be time consuming and slow down an application the class also keeps track of the database connection in a static field to make sure only 1 connection is ever created through the application.
 
-The only setup needed is to provide the Database class with your database details in the constants `HOST, DB_NAME, USERNAME, PASSWORD` in the top of the Database class. If you are using a other database then MySQL you will have to set up the connection in the constructor of the class appropriately. The class uses PDO so you will also have to make sure the appropriate PDO driver for your database is installed.
+The only setup needed is to provide the Database class with your database details in the constants `HOST, DB_NAME, USERNAME AND PASSWORD` in the top of the Database class. If you are using a other database then MySQL you will have to set up the connection in the constructor of the class appropriately. The class uses PDO so you will also have to make sure the appropriate PDO driver for your database is installed.
 
 `PDO::ATTR_ERRORMODE` is set to `PDO::ERRMODE_SILENT`. If error reporting is needed this can be changed to `PDO::ERRMODE_EXCEPTION` in the class constructor.
 ___
