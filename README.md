@@ -1,5 +1,5 @@
 # Database.php
-___
+---
 ### Initiating
 ##### Initiate a database connection by creating a new Database() object.
 ```php 
