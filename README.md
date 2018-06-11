@@ -21,7 +21,7 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
 
 | Parameter | Description |
 |--|--|
-| `string $table` | Database Table. |
+| `php string $table` | Database Table. |
 | array  $where | Optional: Array holding the filters/'WHERE' clause for the query. |
 | string $columns | Optional: the column to select (SELECT count(*) FROM ...), defaults to *. |
 | string $whereMode | Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND. |
