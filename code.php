@@ -1,170 +1,419 @@
-<?php 
+<?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2018. Raymond Johannessen
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * Raymond Johannessen Webutvikling
+ * https://rajohan.no
+ */
 
-    class Database {
+declare(strict_types=1);
 
-        private $connect;
+class Database
+{
+    private const HOST = "localhost";
+    private const DB_NAME = "test_db";
+    private const USERNAME = "root";
+    private const PASSWORD = "";
+    private $connection;
+    private $stmt;
+    private $lastInsertId;
+    private static $connectionInstance;
 
-        function __construct() {
+    public function __construct()
+    {
+        $this->lastInsertId = 0;
 
-            if (!defined('DB_HOST')) { 
-                
-                define('DB_HOST','localhost');
-                
+        if(!isset(self::$connectionInstance)) {
+            try {
+                self::$connectionInstance = new PDO("mysql:host=" . self::HOST . "; dbname=" . self::DB_NAME, self::USERNAME, self::PASSWORD);
+                self::$connectionInstance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $exception) {
+                echo $exception->getMessage();
             }
-            
-            if (!defined('DB_USER')) {
-                
-                define('DB_USER','username');
-                
-            }
-            
-            if (!defined('DB_PASS')) {
-                
-                define('DB_PASS','password');
-                
-            }
-            
-            if (!defined('DB_NAME')) { 
-                
-                define('DB_NAME','db_name'); 
-                
-            }
-
-            $this->connect = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-            
         }
 
-        /////////////////////////////////////////////////////////
-        // Method to generate placeholders based on identifiers
-        ////////////////////////////////////////////////////////
-        private function placeholders($identifiers) {
-
-            $replace = array("i", "d", "s", "m"); // characters to replace
-            $replace_with = array("?,", "?,", "?,", "?,"); // characters to replace with
-            $placeholders = str_replace($replace, $replace_with, $identifiers); // replace 'i', 'd', 's', 'm' with '?,'
-            $placeholders = rtrim($placeholders,", "); // remove last ',';
-            return $placeholders;
-
-        }
-
-
-        /////////////////////////////////////////////////////////
-        // Method to add placeholders to the inputed db columns
-        ////////////////////////////////////////////////////////
-        private function placeholders_columns($db_columns) {
-
-            $replace = array(","); // characters to replace
-            $replace_with = array("=?,"); // characters to replace with
-            $db_columns = str_replace($replace, $replace_with, $db_columns); // replace ',' with '=?,'
-            $db_columns = rtrim($db_columns,", ")."=?"; // remove last ',' and add "=? at the end";
-            return $db_columns;
-
-        }
-
-
-        /////////////////////////////////////////////////////////
-        // Method to close connection
-        /////////////////////////////////////////////////////////
-        private function close_connection($stmt) {
-
-            $stmt->close(); // Close statement
-            $this->connect->close(); // Close connection
-
-        }
-
-
-        ////////////////////////////////////////////////////////
-        // Method to insert data to database
-        ///////////////////////////////////////////////////////
-        function db_insert($db_table, $db_columns, $identifiers, $variables) {
-            
-            // $db_table = database table | $db_columns = columns in database table separated by ',' | 
-            // $identifiers = variable identifiers | $variables = variables passed in as an array
-            // EX: db_insert('users', 'username, password, name, email', 'ssss', $variables)
-            
-            $placeholders = $this->placeholders($identifiers); // Generate placeholders based on the value of $identifiers
-            
-            $stmt = $this->connect->prepare("INSERT INTO $db_table ($db_columns) VALUES ($placeholders)"); // prepare statement
-            $stmt->bind_param($identifiers, ...$variables); // bind parameters 
-            
-            // insert to database
-            if($stmt->execute()) {
-
-                $this->close_connection($stmt); // Close connection
-                return true;
-
-            } else {
-
-                $this->close_connection($stmt); // Close connection
-                return false;
-
-            }
-
-        }
-
-
-        ///////////////////////////////////////////////////////
-        // Method to update data in database
-        ///////////////////////////////////////////////////////
-        function db_update($db_table, $db_columns, $where, $identifiers, $variables) {
-
-            // $db_table = database table | $db_columns = columns in database table separated by '=?,' | 
-            // $where = table row identifier | $identifiers = variable identifiers
-            // $variables = variables passed in as an array
-            // $where VALUE HAVE TO BE ADDED LAST IN THE VARIABLES ARRAY!
-            // EX: db_update('users', 'username, password', 'id', 'ss', $variables)
-            
-            $db_columns = $this->placeholders_columns($db_columns); // Generate placeholders based on the value of $identifiers
-            $where = $where."=?"; // add placeholder to $where 
-
-            $stmt = $this->connect->prepare("UPDATE $db_table SET $db_columns WHERE $where"); // prepare statement
-            $stmt->bind_param($identifiers, ...$variables); // bind parameters 
-            
-            // update database
-            if($stmt->execute()) {
-
-                $this->close_connection($stmt); // Close connection
-                return true;
-
-            } else {
-
-                $this->close_connection($stmt); // Close connection
-                return false;
-
-            }
-
-        }
-
-
-        ///////////////////////////////////////////////////////
-        // Method to delete data from the database
-        ///////////////////////////////////////////////////////
-        function db_delete($db_table, $where, $identifier, $variable) {
-
-            // $db_table = database table | $where = table row identifier 
-            // $identifier = variable identifier | $variable = value of the $where 
-            // EX: db_delete('users', 'id', 'i', '86');
-
-            $where = $where."=?"; // add placeholder to $where 
-
-            $stmt = $this->connect->prepare("DELETE FROM $db_table WHERE $where"); // prepare statement
-            $stmt->bind_param($identifier, $variable); // bind parameters 
-            
-            // delete from database
-            if($stmt->execute()) {
-
-                $this->close_connection($stmt); // Close connection
-                return true;
-
-            } else {
-
-                $this->close_connection($stmt); // Close connection
-                return false;
-
-            }
-
-        }
-
+        $this->connection = self::$connectionInstance;
+        $this->stmt = $this->connection->prepare("");
     }
-    
+
+    /************************************** Database Select Method ***************************************
+     *
+     * @param string $table       - Database Table.
+     * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
+     * @param string $columns     - Optional: the column to select (SELECT count(*) FROM ...), defaults to *.
+     * @param string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
+     * @param string $order       - Optional: string holding the 'ORDER BY' clause.
+     * @param string $limit       - Optional: string holding the 'LIMIT' clause.
+     * @param array  $dataTypes   - Optional: Pass in data types as an array in equal order to the $where.
+     *                            - Options: int/integer, bool/boolean, str/string.
+     *                            - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     * @param string $returnType  - Optional: Choose data type to get returned result as.
+     *                            - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).
+     *                            - Remember to set $returnClass if class is chosen or return type will be set to object.
+     * @param string $returnClass - Optional: Class to return data as when class is chosen as $returnType.
+     *
+     * @return mixed              - Returns as object, class or array based on $returnType choice.
+     *
+     * @example $db->select("users",
+     *                      array("id" => 55,
+     *                            "firstName" => "Raymond"),
+     *                      "*",
+     *                      "OR",
+     *                      "ORDER BY ID ASC",
+     *                      "LIMIT 20",
+     *                      array("int", "str"),
+     *                      "Class",
+     *                      "TestClass");
+     */
+
+    public function select(string $table, array $where=[], string $columns="*", string $whereMode="AND",
+                           string $order="", string $limit="", array $dataTypes=[], string $returnType="object",
+                           string $returnClass="")
+    {
+        $whereFormatted = $this->formatWhereCondition($where, $whereMode);
+
+        $this->stmt = $this->connection->prepare("SELECT $columns FROM $table $whereFormatted $order $limit");
+
+        $where = array_values($where);
+        $dataTypes = $this->setDataType($where, $dataTypes);
+
+        foreach ($where as $key => $item) {
+            $this->stmt->bindValue($key + 1, $item, $dataTypes[$key]);
+        }
+
+        $this->stmt->execute();
+
+        $formattedReturnType = $this->formatReturnType($returnType, $returnClass);
+
+        if($formattedReturnType === PDO::FETCH_CLASS && !empty($returnClass)) {
+            return $this->stmt->fetchAll($formattedReturnType, $returnClass);
+        } else {
+            return $this->stmt->fetchAll($formattedReturnType);
+        }
+    }
+
+    /********************************** Database Insert Method **********************************
+     *
+     * @param string $table       - Database Table.
+     * @param array  $columnsData - Array of columns and data to insert to the assign columns.
+     * @param array  $dataTypes   - Optional: Pass in data types as an array in equal order to $columnsData.
+     *                            - Options: int/integer, bool/boolean, str/string.
+     *                            - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     *
+     * @return boolean            - True = Success, False = Error.
+     *
+     * @example $db->insert("users",
+     *                      Array("firstName" => "Raymond",
+     *                            "lastName" => "Johannessen",
+     *                            "email" => "mail@rajohan.no"),
+     *                      Array("str", "str", "str"));
+     */
+    public function insert(string $table, Array $columnsData, Array $dataTypes=[])
+    {
+
+        $placeholders = $this->generatePlaceholders($columnsData);
+        $columns = implode(", ", array_keys($columnsData));
+
+        $this->stmt = $this->connection->prepare("INSERT INTO $table ($columns) VALUES ($placeholders)");
+
+        $columnsData = array_values($columnsData);
+        $dataTypes = $this->setDataType($columnsData, $dataTypes);
+
+        foreach ($columnsData as $index => $data) {
+            $this->stmt->bindValue($index + 1, $data, $dataTypes[$index]);
+        }
+
+        $result = $this->stmt->execute();
+        $this->lastInsertId = (int) $this->connection->lastInsertId();
+
+        return $result;
+    }
+
+
+    /********************************** Database Update Method **********************************
+     *
+     * @param string $table       - Database Table.
+     * @param array  $columnsData - Array of columns and data to insert to the assign columns.
+     * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
+     * @param string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
+     * @param array  $dataTypes   - Optional: Pass in data types as an array in equal order to $columnsData.
+     *                            - Options: int/integer, bool/boolean, str/string.
+     *                            - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     *
+     * @return boolean            - True = Success, False = Error.
+     *
+     * @example $db->update("users",
+     *                      Array("firstName" => "Raymond",
+     *                            "lastName" => "Johannessen",
+     *                            "email" => "mail@rajohan.no"),
+     *                      Array("id" => 1,
+     *                            "username" => "Rajohan"),
+     *                      "OR",
+     *                      Array("str", "str", "str", "int", "str"));
+     */
+    public function update(string $table, array $columnsData, array $where=[], string $whereMode="AND", Array $dataTypes=[])
+    {
+        $columns = $this->appendPlaceholders($columnsData);
+        $whereFormatted = $this->formatWhereCondition($where, $whereMode);
+
+        $this->stmt = $this->connection->prepare("UPDATE $table SET $columns $whereFormatted");
+
+        $columnsData = array_values($columnsData);
+        $where = array_values($where);
+        $data = array_merge($columnsData, $where);
+
+        $dataTypes = $this->setDataType($data, $dataTypes);
+
+        foreach ($data as $key => $item) {
+            $this->stmt->bindValue($key + 1, $item, $dataTypes[$key]);
+        }
+
+        return $this->stmt->execute();
+    }
+
+    /********************************** Database Delete Method **********************************
+     *
+     * @param string $table       - Database Table.
+     * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
+     * @param string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
+     * @param array  $dataTypes   - Optional: Pass in data types as an array in equal order to $where.
+     *                            - Options: int/integer, bool/boolean, str/string.
+     *                            - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     *
+     * @return boolean            - True = Success, False = Error.
+     *
+     * @example $db->delete("users",
+     *                      Array("id" => 1,
+     *                            "username" => "Rajohan"),
+     *                      "OR",
+     *                      Array("int", "str"));
+     */
+    public function delete(string $table, array $where=[], string $whereMode="AND", Array $dataTypes=[])
+    {
+        $whereFormatted = $this->formatWhereCondition($where, $whereMode);
+
+        $this->stmt = $this->connection->prepare("DELETE FROM $table $whereFormatted");
+
+        $where = array_values($where);
+        $dataTypes = $this->setDataType($where, $dataTypes);
+
+        foreach ($where as $key => $item) {
+            $this->stmt->bindValue($key + 1, $item, $dataTypes[$key]);
+        }
+
+        return $this->stmt->execute();
+    }
+
+    /************************************** Get row count ***************************************
+     *
+     * @param string $table     - Database Table.
+     * @param array  $where     - Optional: Array holding the filters/'WHERE' clause for the query.
+     * @param string $whereMode - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
+     * @param string $columns   - Optional: the column to select (SELECT count(*) FROM ...), defaults to *.
+     * @param array  $dataTypes - Optional: Pass in data types as an array in equal order to the $where.
+     *                          - Options: int/integer, bool/boolean, str/string.
+     *                          - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     *
+     * @return integer          - Row count.
+     *
+     * @example $db->count("users",
+     *                     Array("id" => 1,
+     *                           "firstName" => "Raymond"),
+     *                     "OR",
+     *                     "*",
+     *                     Array("int", "str"));
+     */
+    public function count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[])
+    {
+        $whereFormatted = $this->formatWhereCondition($where, $whereMode);
+
+        $this->stmt = $this->connection->prepare("SELECT count($columns) AS `count` FROM $table $whereFormatted");
+
+        $where = array_values($where);
+        $dataTypes = $this->setDataType($where, $dataTypes);
+
+        foreach ($where as $key => $item) {
+            $this->stmt->bindValue($key + 1, $item, $dataTypes[$key]);
+        }
+
+        $this->stmt->execute();
+
+        return (int) $this->stmt->fetchObject()->count;
+    }
+
+    /******************************** Get last inserted row's id ********************************
+     *
+     * @return integer - Last inserted row's Id.
+     *
+     * @example $db->id();
+     */
+    public function id()
+    {
+        return $this->lastInsertId;
+    }
+
+    /*********************************** Get last used query ************************************
+     *
+     * @return string - Last used sql query (debugDumpParams)
+     *
+     * @example $db->sql();
+     */
+    public function sql() {
+        return $this->stmt->debugDumpParams();
+    }
+
+
+    public function closeConnection() {
+        $this->stmt->closeCursor();
+        $this->stmt = null;
+        $this->connection = null;
+        self::$connectionInstance = null;
+    }
+
+    /************** Helper method to generate placeholders for prepared statements **************
+     *
+     * @param array $dataArray - Array of data to generate placeholders for.
+     *
+     * @return string          - String of generated placeholders. Format: "?, ?, ?, ?"
+     */
+    private function generatePlaceholders(Array $dataArray)
+    {
+        $dataArrayLength = count($dataArray);
+        $placeholders = "";
+
+        for ($i = 1; $i <= $dataArrayLength; $i++) {
+            $placeholders .= $i !== $dataArrayLength ? "?, " : "?";
+        }
+
+        return $placeholders;
+    }
+
+    /*************** Helper method to append placeholders for prepared statements ***************
+     *
+     * @param array $data  - Data to append placeholders to.
+     *
+     * @return string      - String with placeholders appended. Format: "firstName=?, lastName=?"
+     */
+    private function appendPlaceholders(array $data)
+    {
+        $data = implode("=?, ", array_keys($data));
+        $data .= "=?";
+
+        return $data;
+    }
+
+    /*********************** Helper method to format the where condition ************************
+     *
+     * @param array  $where      - Data to format the where condition on
+     * @param string $whereMode  - Add an 'AND' or 'OR' after each item in the $where array, defaults to AND
+     *
+     * @return string            - String with placeholders appended. Format: "WHERE id=? AND username=?"
+     */
+    private function formatWhereCondition(array $where, string $whereMode="AND")
+    {
+        $andOr = $whereMode === "OR" ? "OR" : "AND";
+
+        $where = implode("=? $andOr ", array_keys($where));
+
+        if(!empty($where)) {
+            $where = "WHERE $where=?";
+        }
+
+        return $where;
+    }
+
+    /************************* Helper method to format the return type **************************
+     *
+     * @param string $returnType  - Data type to get returned result as.
+     *                            - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).
+     * @param string $returnClass - Class to return data as when class is chosen as $returnType
+     *
+     * @return string             - Data type value associated with PDO::FETCH_OBJ, PDO::FETCH_CLASS, PDO::FETCH_ASSOC.
+     */
+    private function formatReturnType(string $returnType, string $returnClass) {
+        switch (strtolower($returnType)) {
+            case "object":
+            case "obj":
+                $returnType = PDO::FETCH_OBJ;
+                break;
+            case "class":
+                if(!empty($returnClass)) {
+                    $returnType = PDO::FETCH_CLASS;
+                } else {
+                    $returnType = PDO::FETCH_OBJ;
+                }
+                break;
+            case "array":
+            case "arr":
+            case "assoc":
+                $returnType = PDO::FETCH_ASSOC;
+                break;
+            default:
+                $returnType = PDO::FETCH_OBJ;
+                break;
+        }
+
+        return $returnType;
+    }
+
+    /*********************** Helper method to set the correct data types ************************
+     *
+     * @param array $data      - Array of data to link to the data types
+     * @param array $dataTypes - Array with dataType for $data. Options: int/integer, bool/boolean, str/string
+     *
+     * @return array           - Data type value associated with PDO::PARAM_INT, PDO::PARAM_STR AND PDO::PARAM_BOOL.
+     */
+    private function setDataType(Array $data, Array $dataTypes)
+    {
+        foreach ($data as $key => $value) {
+            if (!isset($dataTypes[$key]) || empty($dataTypes[$key])) {
+                $dataTypes[$key] = PDO::PARAM_STR;
+            } else {
+                switch (strtolower($dataTypes[$key])) {
+                    case "integer":
+                    case "int":
+                        $dataTypes[$key] = PDO::PARAM_INT;
+                        break;
+                    case "string":
+                    case "str":
+                        $dataTypes[$key] = PDO::PARAM_STR;
+                        break;
+                    case "boolean":
+                    case "bool":
+                        $dataTypes[$key] = PDO::PARAM_BOOL;
+                        break;
+                    default:
+                        $dataTypes[$key] = PDO::PARAM_STR;
+                        break;
+                }
+            }
+        }
+        return $dataTypes;
+    }
+}
+
+$db = new Database();
+$db->closeConnection();
+
+
 ?>
