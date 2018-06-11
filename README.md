@@ -62,7 +62,8 @@ $db->insert("users",
 ### Update
 ##### Update one or more rows of a database table
 ```php
-$db->update(string $table, array $columnsData, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
+$db->update(string $table, array $columnsData, array $where=[], 
+            string $whereMode="AND", Array $dataTypes=[]);
 ```
 ##### Arguments:
 | Parameter | Description |
@@ -137,19 +138,19 @@ $db->count("users",
            "*",
            Array("int", "str"));
 ```
-#### Id
+### Id
 ##### Last inserted row's id
 ```php
 $db->id();
 ```
-#### Sql
+### Sql
 ##### Get last used query
 ```php
 $db->sql();
 ```
-#### CloseConnection
+### CloseConnection
 ##### Close the database connection
 ```php
 $db->closeConnection();
 ```
-#### Licensed under the MIT License.
+### Licensed under the MIT License.
