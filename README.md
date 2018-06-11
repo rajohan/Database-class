@@ -1,12 +1,12 @@
 # Database.php
----
+___
 ### Initiating
 ##### Initiate a database connection by creating a new Database() object.
 ```php 
 require_once('Database.php');
 $db = new Database(); 
 ```
----
+___
 ### Select
 ##### Select rows from a database table
 ```php
