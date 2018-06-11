@@ -19,21 +19,23 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
 ```
 ##### Arguments:
 
-string $table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Database Table.  
-array  $where &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Optional: Array holding the filters/'WHERE' clause for the query.  
-string $columns &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Optional: the column to select (SELECT count(*) FROM ...), defaults to *.  
-string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.  
-string $order       - Optional: string holding the 'ORDER BY' clause.  
-string $limit       - Optional: string holding the 'LIMIT' clause.  
-array  $dataTypes   - Optional: Pass in data types as an array in equal order to the $where.  
-                        - Options: int/integer, bool/boolean, str/string.  
-                        - Data type will default to string if nothing is passed in (PDO::PARAM_STR).  
-string $returnType  - Optional: Choose data type to get returned result as.  
-                        - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).  
-                        - Remember to set $returnClass if class is chosen or return type will be set to object.  
-string $returnClass - Optional: Class to return data as when class is chosen as $returnType.  
-
-return mixed        - Returns as object, class or array based on $returnType choice.  
+| Parameter | Description |
+|--|--|
+| string $table | Database Table. |
+| array  $where | Optional: Array holding the filters/'WHERE' clause for the query. |
+| string $columns | Optional: the column to select (SELECT count(*) FROM ...), defaults to *. |
+| string $whereMode | Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND. |
+| string $order | Optional: string holding the 'ORDER BY' clause.  
+| string $limit | Optional: string holding the 'LIMIT' clause. |
+| array  $dataTypes | Optional: Pass in data types as an array in equal order to the $where. | 
+| | Options: int/integer, bool/boolean, str/string. |
+| | Data type will default to string if nothing is passed in (PDO::PARAM_STR).| 
+| string $returnType | Optional: Choose data type to get returned result as. |
+| | Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ). |
+| | Remember to set $returnClass if class is chosen or return type will be set to object. | 
+| string $returnClass | Optional: Class to return data as when class is chosen as $returnType. |
+| &nbsp; | &nbsp; |
+| return mixed       | Returns as object, class or array based on $returnType choice. |
 
 ##### Example:
 
