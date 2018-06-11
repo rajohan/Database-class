@@ -1,5 +1,5 @@
 # Database.php
----
+___
 ### Initiating
 ##### Initiate a database connection by creating a new Database() object.
 ```php 
@@ -36,7 +36,7 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
 $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR", 
             "ORDER BY ID ASC", "LIMIT 5", array("int", "str"), "Class", "TestClass");
 ```
----
+___
 ### Insert
 ##### Insert data into a database table
 ```php
@@ -59,7 +59,7 @@ $db->insert("users",
                   "email" => "mail@rajohan.no"),
             Array("str", "str", "str"));
 ```
----
+___
 ### Update
 ##### Update one or more rows of a database table
 ```php
@@ -88,7 +88,7 @@ $db->update("users",
             "OR",
             Array("str", "str", "str", "int", "str"));
 ```
----
+___
 ### Delete
 ##### Remove one or more rows from a database table
 ```php
@@ -112,7 +112,7 @@ $db->delete("users",
             "OR",
             Array("int", "str"));
 ```
----
+___
 ### Count
 ##### Get row count from a database table
 ```php
@@ -138,23 +138,23 @@ $db->count("users",
            "*",
            Array("int", "str"));
 ```
----
+___
 ### Id
 ##### Last inserted row's id
 ```php
 $db->id();
 ```
----
+___
 ### Sql
 ##### Get last used query
 ```php
 $db->sql();
 ```
----
+___
 ### CloseConnection
 ##### Close the database connection
 ```php
 $db->closeConnection();
 ```
----
+___
 ### Licensed under the MIT License.
