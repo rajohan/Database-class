@@ -38,10 +38,10 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
 | return mixed       | Returns as object, class or array based on $returnType choice. |
 
 ##### Example:
-
+```php
 $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR", "ORDER BY ID ASC", "LIMIT 5",
             array("int", "str"), "Class", "TestClass");
-
+```
 #### Insert
 ##### Insert data into a database table
 
@@ -60,14 +60,13 @@ array  $dataTypes   - Optional: Pass in data types as an array in equal order to
 return boolean      - True = Success, False = Error.
 
 ##### Example:
-
+```php
 $db->insert("users",
             Array("firstName" => "Raymond",
                   "lastName" => "Johannessen",
                   "email" => "mail@rajohan.no"),
             Array("str", "str", "str"));
-
-
+```
 #### Update
 ##### Update one or more rows of a database table
 
@@ -84,12 +83,11 @@ array  $dataTypes   - Optional: Pass in data types as an array in equal order to
 return boolean      - True = Success, False = Error.
 
 ##### Usage:
-
+```php
 $db->update(string $table, array $columnsData, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
-
+```
 ##### Example:
-
-
+```php
 $db->update("users",
             Array("firstName" => "Raymond",
                   "lastName" => "Johannessen",
@@ -98,8 +96,7 @@ $db->update("users",
                   "username" => "Rajohan"),
             "OR",
             Array("str", "str", "str", "int", "str"));
-
-
+```
 #### Delete
 ##### Remove one or more rows from a database table
 
