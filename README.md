@@ -19,9 +19,9 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
 ```
 ##### Arguments:
 
-string $table &nbsp;&nbsp;&nbsp; - Database Table.  
-array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.  
-string $columns     - Optional: the column to select (SELECT count(*) FROM ...), defaults to *.  
+string $table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Database Table.  
+array  $where &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Optional: Array holding the filters/'WHERE' clause for the query.  
+string $columns &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Optional: the column to select (SELECT count(*) FROM ...), defaults to *.  
 string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.  
 string $order       - Optional: string holding the 'ORDER BY' clause.  
 string $limit       - Optional: string holding the 'LIMIT' clause.  
