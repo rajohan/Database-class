@@ -9,12 +9,13 @@ $db = new Database();
 ```
 
 #### Select
-###### Select rows from a database table
+##### Select rows from a database table
 
 ##### Usage:
 ```php
-$db->select(string $table, array $where=[], string $columns="*", string $whereMode="AND", string $order="",
-            string $limit="", array $dataTypes=[], string $returnType="object", string $returnClass="");
+$db->select(string $table, array $where=[], string $columns="*", string $whereMode="AND", 
+            string $order="",string $limit="", array $dataTypes=[], string $returnType="object", 
+            string $returnClass="");
 ```
 ##### Arguments:
 
