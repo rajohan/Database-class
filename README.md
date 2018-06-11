@@ -1,15 +1,13 @@
 # Database.php
 
-#### Initiating
+### Initiating
 ##### Initiate a database connection by creating a new Database() object.
 ```php 
 require_once('Database.php');
 $db = new Database(); 
 ```
-#### Select
+### Select
 ##### Select rows from a database table
-
-##### Usage:
 ```php
 $db->select(string $table, array $where=[], string $columns="*", string $whereMode="AND", 
             string $order="",string $limit="", array $dataTypes=[], string $returnType="object", 
@@ -38,9 +36,8 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
 $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR", 
             "ORDER BY ID ASC", "LIMIT 5", array("int", "str"), "Class", "TestClass");
 ```
-#### Insert
+### Insert
 ##### Insert data into a database table
-##### Usage:
 ```php
 $db->insert(string $table, Array $columnsData, Array $dataTypes=[]);
 ```
@@ -62,7 +59,7 @@ $db->insert("users",
                   "email" => "mail@rajohan.no"),
             Array("str", "str", "str"));
 ```
-#### Update
+### Update
 ##### Update one or more rows of a database table
 ##### Arguments:
 | Parameter | Description |
