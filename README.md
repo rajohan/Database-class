@@ -2,12 +2,10 @@
 
 #### Initiating
 ##### Initiate a database connection by creating a new Database() object.
-
 ```php 
 require_once('Database.php');
 $db = new Database(); 
 ```
-
 #### Select
 ##### Select rows from a database table
 
@@ -18,10 +16,8 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
             string $returnClass="");
 ```
 ##### Arguments:
-
 | Parameter | Description |
 |--|--|
-| ```php |  |
 | string $table | Database Table. |
 | array  $where | Optional: Array holding the filters/'WHERE' clause for the query. |
 | string $columns | Optional: the column to select (SELECT count(*) FROM ...), defaults to *. |
@@ -37,7 +33,6 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
 | string $returnClass | Optional: Class to return data as when class is chosen as $returnType. |
 | &nbsp; | &nbsp; |
 | return mixed       | Returns as object, class or array based on $returnType choice. |
-| ``` |  |
 ##### Example:
 ```php
 $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR", 
@@ -45,21 +40,20 @@ $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR",
 ```
 #### Insert
 ##### Insert data into a database table
-
 ##### Usage:
 ```php
 $db->insert(string $table, Array $columnsData, Array $dataTypes=[]);
 ```
 ##### Arguments:
-
-string $table       - Database Table.
-array  $columnsData - Array of columns and data to insert to the assign columns.
-array  $dataTypes   - Optional: Pass in data types as an array in equal order to $columnsData.
-                        - Options: int/integer, bool/boolean, str/string.
-                        - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
-
-return boolean      - True = Success, False = Error.
-
+| Parameter | Description |
+|--|--|
+| string $table | Database Table. |
+| array  $columnsData | Array of columns and data to insert to the assign columns. |
+| array  $dataTypes | Optional: Pass in data types as an array in equal order to $columnsData. |
+| | Options: int/integer, bool/boolean, str/string. |
+| | Data type will default to string if nothing is passed in (PDO::PARAM_STR). |
+| &nbsp; | &nbsp; |
+| return boolean | True = Success, False = Error. |
 ##### Example:
 ```php
 $db->insert("users",
@@ -70,18 +64,18 @@ $db->insert("users",
 ```
 #### Update
 ##### Update one or more rows of a database table
-
 ##### Arguments:
-
-string $table       - Database Table.
-array  $columnsData - Array of columns and data to insert to the assign columns.
-array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
-string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
-array  $dataTypes   - Optional: Pass in data types as an array in equal order to $columnsData.
-                        - Options: int/integer, bool/boolean, str/string.
-                        - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
-
-return boolean      - True = Success, False = Error.
+| Parameter | Description |
+|--|--|
+| string $table | Database Table.|
+| array  $columnsData | Array of columns and data to insert to the assign columns. |
+| array  $where | Optional: Array holding the filters/'WHERE' clause for the query. |
+| string $whereMode | Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND. |
+| array  $dataTypes | Optional: Pass in data types as an array in equal order to $columnsData. |
+| | Options: int/integer, bool/boolean, str/string. |
+| | Data type will default to string if nothing is passed in (PDO::PARAM_STR). |
+| &nbsp; | &nbsp; |
+| return boolean | True = Success, False = Error. |
 
 ##### Usage:
 ```php
