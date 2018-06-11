@@ -2,8 +2,8 @@
 
 ## Usage
 
-### Initiating
-#### Initiate a database connection by creating a new Database() object.
+#### Initiating
+##### Initiate a database connection by creating a new Database() object.
 
 ```php 
 require_once('Database.php');
@@ -13,12 +13,12 @@ $db = new Database();
 Select
 Select rows from a database table
 
-#### Usage:
+##### Usage:
 
 $db->select(string $table, array $where=[], string $columns="*", string $whereMode="AND", string $order="",
             string $limit="", array $dataTypes=[], string $returnType="object", string $returnClass="");
 
-#### Arguments:
+##### Arguments:
 
 string $table       - Database Table.
 array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
@@ -36,7 +36,7 @@ string $returnClass - Optional: Class to return data as when class is chosen as 
 
 return mixed        - Returns as object, class or array based on $returnType choice.
 
-#### Example:
+##### Example:
 
 $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR", "ORDER BY ID ASC", "LIMIT 5",
             array("int", "str"), "Class", "TestClass");
