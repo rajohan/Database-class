@@ -412,8 +412,4 @@ class Database
     }
 }
 
-$db = new Database();
-$db->closeConnection();
-
-
 ?>
