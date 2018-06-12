@@ -130,7 +130,6 @@ class Database
      */
     public function insert(string $table, Array $columnsData, Array $dataTypes=[])
     {
-
         $placeholders = $this->generatePlaceholders($columnsData);
         $columns = implode(", ", array_keys($columnsData));
 
