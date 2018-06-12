@@ -278,7 +278,8 @@ class Database
      *
      * @example $db->sql();
      */
-    public function sql() {
+    public function sql() 
+    {
         return $this->stmt->debugDumpParams();
     }
 
@@ -288,7 +289,8 @@ class Database
      * 
      * @example $db->closeConnection();
      */
-    public function closeConnection() {
+    public function closeConnection() 
+    {
         $this->stmt->closeCursor();
         $this->stmt = null;
         $this->connection = null;
@@ -355,7 +357,8 @@ class Database
      *
      * @return string             - Data type value associated with PDO::FETCH_OBJ, PDO::FETCH_CLASS, PDO::FETCH_ASSOC.
      */
-    private function formatReturnType(string $returnType, string $returnClass) {
+    private function formatReturnType(string $returnType, string $returnClass) 
+    {
         switch (strtolower($returnType)) {
             case "object":
             case "obj":
