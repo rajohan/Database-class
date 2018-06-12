@@ -416,5 +416,4 @@ class Database
         return $dataTypes;
     }
 }
-
 ?>
