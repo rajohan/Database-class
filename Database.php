@@ -282,7 +282,12 @@ class Database
         return $this->stmt->debugDumpParams();
     }
 
-
+    /****************************** Close the database connection *******************************
+     *
+     * @return void
+     * 
+     * @example $db->closeConnection
+     */
     public function closeConnection() {
         $this->stmt->closeCursor();
         $this->stmt = null;
