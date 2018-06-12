@@ -286,7 +286,7 @@ class Database
      *
      * @return void
      * 
-     * @example $db->closeConnection
+     * @example $db->closeConnection();
      */
     public function closeConnection() {
         $this->stmt->closeCursor();
