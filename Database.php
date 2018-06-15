@@ -85,7 +85,6 @@ class Database
      *                      "Class",
      *                      "TestClass");
      */
-
     public function select(string $table, array $where=[], string $columns="*", string $whereMode="AND",
                            string $order="", string $limit="", array $dataTypes=[], string $returnType="object",
                            string $returnClass="")
