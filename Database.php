@@ -417,7 +417,7 @@ class Database
     }
     
     /**
-     **************** Helper method to format the where like condition ******************
+     ******************** Helper method to format the where like condition ********************
      *
      * @param array  $where      - Data to format the where like condition on
      * @param string $whereMode  - Add an 'AND' or 'OR' after each item in the $where array, defaults to OR
