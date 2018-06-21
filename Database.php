@@ -150,8 +150,6 @@ class Database
 
         $this->stmt = $this->connection->prepare("SELECT $columns FROM $table $whereFormatted $order $limit");
 
-        print_r($this->stmt);
-
         $where = array_values($where);
         $dataTypes = $this->setDataType($where, $dataTypes);
 
