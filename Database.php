@@ -136,7 +136,7 @@ class Database
      *                      "OR",
      *                      "ORDER BY ID ASC",
      *                      "LIMIT 20",
-     *                      array("int", "str"),
+     *                      array("str", "str"),
      *                      "Class",
      *                      "TestClass");
      */
