@@ -60,7 +60,7 @@ class Database
      *
      * @param string $table       - Database Table.
      * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
-     * @param string $columns     - Optional: the column to select (SELECT count(*) FROM ...), defaults to *.
+     * @param string $columns     - Optional: the column to select (SELECT * FROM ...), defaults to *.
      * @param string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
      * @param string $order       - Optional: string holding the 'ORDER BY' clause.
      * @param string $limit       - Optional: string holding the 'LIMIT' clause.
@@ -92,6 +92,63 @@ class Database
         $whereFormatted = $this->formatWhereCondition($where, $whereMode);
 
         $this->stmt = $this->connection->prepare("SELECT $columns FROM $table $whereFormatted $order $limit");
+
+        $where = array_values($where);
+        $dataTypes = $this->setDataType($where, $dataTypes);
+
+        foreach ($where as $key => $item) {
+            $this->stmt->bindValue($key + 1, $item, $dataTypes[$key]);
+        }
+
+        $this->stmt->execute();
+
+        $formattedReturnType = $this->formatReturnType($returnType, $returnClass);
+
+        if($formattedReturnType === PDO::FETCH_CLASS && !empty($returnClass)) {
+            return $this->stmt->fetchAll($formattedReturnType, $returnClass);
+        } else {
+            return $this->stmt->fetchAll($formattedReturnType);
+        }
+    }
+    
+    /************************************** Database Search Method ***************************************
+     *
+     * @param string $table       - Database Table.
+     * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
+     * @param string $columns     - Optional: the column to select (SELECT * FROM ...), defaults to *.
+     * @param string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to OR.
+     * @param string $order       - Optional: string holding the 'ORDER BY' clause.
+     * @param string $limit       - Optional: string holding the 'LIMIT' clause.
+     * @param array  $dataTypes   - Optional: Pass in data types as an array in equal order to the $where.
+     *                            - Options: int/integer, bool/boolean, str/string.
+     *                            - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     * @param string $returnType  - Optional: Choose data type to get returned result as.
+     *                            - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).
+     *                            - Remember to set $returnClass if class is chosen or return type will be set to object.
+     * @param string $returnClass - Optional: Class to return data as when class is chosen as $returnType.
+     *
+     * @return mixed              - Returns as object, class or array based on $returnType choice.
+     *
+     * @example $db->select("users",
+     *                      array("lastName" => "%Johannessen%",
+     *                            "firstName" => "%Raymond%"),
+     *                      "*",
+     *                      "OR",
+     *                      "ORDER BY ID ASC",
+     *                      "LIMIT 20",
+     *                      array("int", "str"),
+     *                      "Class",
+     *                      "TestClass");
+     */
+    public function search(string $table, array $where=[], string $columns="*", string $whereMode="OR",
+                           string $order="", string $limit="", array $dataTypes=[], string $returnType="object",
+                           string $returnClass="")
+    {
+        $whereFormatted = $this->formatWhereLikeCondition($where, $whereMode);
+
+        $this->stmt = $this->connection->prepare("SELECT $columns FROM $table $whereFormatted $order $limit");
+
+        print_r($this->stmt);
 
         $where = array_values($where);
         $dataTypes = $this->setDataType($where, $dataTypes);
@@ -342,6 +399,26 @@ class Database
 
         if(!empty($where)) {
             $where = "WHERE $where=?";
+        }
+
+        return $where;
+    }
+    
+     /****************** Helper method to format the where like condition ******************
+     *
+     * @param array  $where      - Data to format the where like condition on
+     * @param string $whereMode  - Add an 'AND' or 'OR' after each item in the $where array, defaults to OR
+     *
+     * @return string            - String with placeholders appended. Format: "WHERE id LIKE ? OR username LIKE ?"
+     */
+    private function formatWhereLikeCondition(array $where, string $whereMode="OR")
+    {
+        $andOr = $whereMode === "OR" ? "OR" : "AND";
+
+        $where = implode(" LIKE ? $andOr ", array_keys($where));
+
+        if(!empty($where)) {
+            $where = "WHERE $where LIKE ?";
         }
 
         return $where;
