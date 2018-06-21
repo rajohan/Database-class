@@ -56,7 +56,8 @@ class Database
         $this->stmt = $this->connection->prepare("");
     }
 
-    /************************************** Database Select Method ***************************************
+    /**
+     ************************************ Database Select Method ***************************************
      *
      * @param string $table       - Database Table.
      * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
@@ -111,7 +112,8 @@ class Database
         }
     }
     
-    /************************************** Database Search Method ***************************************
+    /**
+     ************************************ Database Search Method ***************************************
      *
      * @param string $table       - Database Table.
      * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
@@ -168,7 +170,8 @@ class Database
         }
     }
 
-    /********************************** Database Insert Method **********************************
+    /**
+     ******************************** Database Insert Method **********************************
      *
      * @param string $table       - Database Table.
      * @param array  $columnsData - Array of columns and data to insert to the assign columns.
@@ -205,7 +208,8 @@ class Database
     }
 
 
-    /********************************** Database Update Method **********************************
+    /**
+     ******************************** Database Update Method **********************************
      *
      * @param string $table       - Database Table.
      * @param array  $columnsData - Array of columns and data to insert to the assign columns.
@@ -246,7 +250,8 @@ class Database
         return $this->stmt->execute();
     }
 
-    /********************************** Database Delete Method **********************************
+    /**
+     ******************************** Database Delete Method **********************************
      *
      * @param string $table       - Database Table.
      * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
@@ -279,7 +284,8 @@ class Database
         return $this->stmt->execute();
     }
 
-    /************************************** Get row count ***************************************
+    /**
+     ************************************ Get row count ***************************************
      *
      * @param string $table     - Database Table.
      * @param array  $where     - Optional: Array holding the filters/'WHERE' clause for the query.
@@ -316,7 +322,8 @@ class Database
         return (int) $this->stmt->fetchObject()->count;
     }
 
-    /******************************** Get last inserted row's id ********************************
+    /**
+     ****************************** Get last inserted row's id ********************************
      *
      * @return integer - Last inserted row's Id.
      *
@@ -327,7 +334,8 @@ class Database
         return $this->lastInsertId;
     }
 
-    /*********************************** Get last used query ************************************
+    /**
+     ********************************* Get last used query ************************************
      *
      * @return string - Last used sql query (debugDumpParams)
      *
@@ -338,7 +346,8 @@ class Database
         return $this->stmt->debugDumpParams();
     }
 
-    /****************************** Close the database connection *******************************
+    /**
+     **************************** Close the database connection *******************************
      *
      * @return void
      * 
@@ -352,7 +361,8 @@ class Database
         self::$connectionInstance = null;
     }
 
-    /************** Helper method to generate placeholders for prepared statements **************
+    /**
+     ************ Helper method to generate placeholders for prepared statements **************
      *
      * @param array $dataArray - Array of data to generate placeholders for.
      *
@@ -370,7 +380,8 @@ class Database
         return $placeholders;
     }
 
-    /*************** Helper method to append placeholders for prepared statements ***************
+    /**
+     ************* Helper method to append placeholders for prepared statements ***************
      *
      * @param array $data  - Data to append placeholders to.
      *
@@ -384,7 +395,8 @@ class Database
         return $data;
     }
 
-    /*********************** Helper method to format the where condition ************************
+    /**
+     ********************* Helper method to format the where condition ************************
      *
      * @param array  $where      - Data to format the where condition on
      * @param string $whereMode  - Add an 'AND' or 'OR' after each item in the $where array, defaults to AND
@@ -404,7 +416,8 @@ class Database
         return $where;
     }
     
-     /****************** Helper method to format the where like condition ******************
+    /**
+     **************** Helper method to format the where like condition ******************
      *
      * @param array  $where      - Data to format the where like condition on
      * @param string $whereMode  - Add an 'AND' or 'OR' after each item in the $where array, defaults to OR
@@ -424,7 +437,8 @@ class Database
         return $where;
     }
 
-    /************************* Helper method to format the return type **************************
+    /**
+     *********************** Helper method to format the return type **************************
      *
      * @param string $returnType  - Data type to get returned result as.
      *                            - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).
@@ -459,7 +473,8 @@ class Database
         return $returnType;
     }
 
-    /*********************** Helper method to set the correct data types ************************
+    /**
+     ********************* Helper method to set the correct data types ************************
      *
      * @param array $data      - Array of data to link to the data types
      * @param array $dataTypes - Array with dataType for $data. Options: int/integer, bool/boolean, str/string
