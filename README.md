@@ -32,7 +32,14 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
 | string $limit | Optional: string holding the 'LIMIT' clause. |
 | array  $dataTypes | Optional: Pass in data types as an array in equal order to the $where. | 
 | | Options: int/integer, bool/boolean, str/string. |
-| | Data type will default to string if nothing is passed in (PDO::PARAM_STR).| 
+| | Data type will default to string if nothing is passed in (PDO::PARAM_STR). | 
+| string $dateColumn | Optional: Date column in the table. Will only be used if $dates are provided. |
+| array $dates | Optional: Pass in to dates to limit the result to rows between two dates. |
+| | Time will default to 00:00:00 if its not provided. |
+| | Remember: Dates passed in have to be in the same format as the database. |
+| | For MySQL this is YYYY-MM-DD HH:II:SS. Lowest date have to be passed in first. |
+| | CORRECT: Array("2018-06-18 00:00:00", "2018-06-19 23:59:59"); |
+| | INVALID: Array("2018-06-19 00:00:00", "2018-06-18 23:59:59"); |
 | string $returnType | Optional: Choose data type to get returned result as. |
 | | Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ). |
 | | Remember to set $returnClass if class is chosen or return type will be set to object. | 
@@ -62,7 +69,14 @@ $db->search(string $table, array $where=[], string $columns="*", string $whereMo
 | string $limit | Optional: string holding the 'LIMIT' clause. |
 | array  $dataTypes | Optional: Pass in data types as an array in equal order to the $where. | 
 | | Options: int/integer, bool/boolean, str/string. |
-| | Data type will default to string if nothing is passed in (PDO::PARAM_STR).| 
+| | Data type will default to string if nothing is passed in (PDO::PARAM_STR).|
+| string $dateColumn | Optional: Date column in the table. Will only be used if $dates are provided. |
+| array $dates | Optional: Pass in to dates to limit the result to rows between two dates. |
+| | Time will default to 00:00:00 if its not provided. |
+| | Remember: Dates passed in have to be in the same format as the database. |
+| | For MySQL this is YYYY-MM-DD HH:II:SS. Lowest date have to be passed in first. |
+| | CORRECT: Array("2018-06-18 00:00:00", "2018-06-19 23:59:59"); |
+| | INVALID: Array("2018-06-19 00:00:00", "2018-06-18 23:59:59"); |
 | string $returnType | Optional: Choose data type to get returned result as. |
 | | Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ). |
 | | Remember to set $returnClass if class is chosen or return type will be set to object. | 
