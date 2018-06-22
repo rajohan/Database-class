@@ -9,7 +9,7 @@ The only setup needed is to provide the Database class with your database detail
 `PDO::ATTR_ERRORMODE` is set to `PDO::ERRMODE_SILENT`. If error reporting is needed this can be changed to `PDO::ERRMODE_EXCEPTION` in the class constructor.
 ___
 ### Initiating
-##### Initiate a database connection by creating a new Database() object.
+##### Initiate a database connection by creating a new Database() object. [v1.0]
 ```php 
 require_once('Database.php');
 $db = new Database(); 
