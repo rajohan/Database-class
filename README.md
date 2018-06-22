@@ -1,4 +1,4 @@
-# Standard CRUD operations database handler v.1.3
+# Standard CRUD operations database handler v. 1.3
 
 This is my Database class to make it easier to do standard CRUD database operations. It has support for selecting, searching, inserting, updating, deleting, get row count, get last inserted row's id and get last executed SQL statement. It comes with some nice functionality, such as automatic prepared statements with binding of all variables on every SQL query to protect the database from malicious code. You can also chose if you want the result when selecting to be returned as an object, class or an array
 
