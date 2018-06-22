@@ -31,7 +31,7 @@ declare(strict_types=1);
 class Database
 {
     private const HOST = "localhost";
-    private const DB_NAME = "test_db";
+    private const DB_NAME = "rajohan_no";
     private const USERNAME = "root";
     private const PASSWORD = "";
     private $connection;
@@ -43,10 +43,10 @@ class Database
     {
         $this->lastInsertId = 0;
 
-        if(!isset(self::$connectionInstance)) {
+        if (!isset(self::$connectionInstance)) {
             try {
                 self::$connectionInstance = new PDO("mysql:host=" . self::HOST . "; dbname=" . self::DB_NAME, self::USERNAME, self::PASSWORD);
-                self::$connectionInstance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+                self::$connectionInstance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $exception) {
                 echo $exception->getMessage();
             }
@@ -60,17 +60,24 @@ class Database
      ************************************ Database Select Method ***************************************
      *
      * @param string $table       - Database Table.
-     * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
+     * @param array $where        - Optional: Array holding the filters/'WHERE' clause for the query.
      * @param string $columns     - Optional: the column to select (SELECT * FROM ...), defaults to *.
      * @param string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
      * @param string $order       - Optional: string holding the 'ORDER BY' clause.
      * @param string $limit       - Optional: string holding the 'LIMIT' clause.
-     * @param array  $dataTypes   - Optional: Pass in data types as an array in equal order to the $where.
-     *                            - Options: int/integer, bool/boolean, str/string.
-     *                            - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     * @param array $dataTypes    - Optional: Pass in data types as an array in equal order to the $where.
+     *                              - Options: int/integer, bool/boolean, str/string.
+     *                              - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     * @param string $dateColumn  - Optional: Date column in the table. Will only be used if $dates are provided.
+     * @param array $dates        - Optional: Pass in to dates to limit the result to rows between two dates.
+     *                              - Time will default to 00:00:00 if its not provided.
+     *                              - Remember: Dates passed in have to be in the same format as the database.
+     *                              - For MySQL this is YYYY-MM-DD HH:II:SS. Lowest date have to be passed in first.
+     *                              - CORRECT: Array("2018-06-18 00:00:00", "2018-06-19 23:59:59");
+     *                              - INVALID: Array("2018-06-19 00:00:00", "2018-06-18 23:59:59");
      * @param string $returnType  - Optional: Choose data type to get returned result as.
-     *                            - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).
-     *                            - Remember to set $returnClass if class is chosen or return type will be set to object.
+     *                              - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).
+     *                              - Remember to set $returnClass if class is chosen or return type will be set to object.
      * @param string $returnClass - Optional: Class to return data as when class is chosen as $returnType.
      *
      * @return mixed              - Returns as object, class or array based on $returnType choice.
@@ -82,19 +89,24 @@ class Database
      *                      "OR",
      *                      "ORDER BY ID ASC",
      *                      "LIMIT 20",
-     *                      array("int", "str"),
+     *                      array("int", "str", "str", "str"),
+     *                      "DATE",
+     *                      "Array("2018-06-21 00:00:00", "2018-06-22 23:59:59")",
      *                      "Class",
      *                      "TestClass");
      */
     public function select(string $table, array $where=[], string $columns="*", string $whereMode="AND",
-                           string $order="", string $limit="", array $dataTypes=[], string $returnType="object",
-                           string $returnClass="")
+                           string $order="", string $limit="", array $dataTypes=[], string $dateColumn="",
+                           array $dates=[], string $returnType="object", string $returnClass="")
     {
         $whereFormatted = $this->formatWhereCondition($where, $whereMode);
+        $datesFormatted = $this->formatDates($where, $dateColumn, $dates);
 
-        $this->stmt = $this->connection->prepare("SELECT $columns FROM $table $whereFormatted $order $limit");
+        $this->stmt = $this->connection->prepare("SELECT $columns FROM $table $whereFormatted $datesFormatted $order $limit");
 
         $where = array_values($where);
+        $where = array_merge($where, $dates);
+
         $dataTypes = $this->setDataType($where, $dataTypes);
 
         foreach ($where as $key => $item) {
@@ -105,28 +117,35 @@ class Database
 
         $formattedReturnType = $this->formatReturnType($returnType, $returnClass);
 
-        if($formattedReturnType === PDO::FETCH_CLASS && !empty($returnClass)) {
+        if ($formattedReturnType === PDO::FETCH_CLASS && !empty($returnClass)) {
             return $this->stmt->fetchAll($formattedReturnType, $returnClass);
         } else {
             return $this->stmt->fetchAll($formattedReturnType);
         }
     }
-    
+
     /**
      ************************************ Database Search Method ***************************************
      *
      * @param string $table       - Database Table.
-     * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
+     * @param array $where        - Optional: Array holding the filters/'WHERE' clause for the query.
      * @param string $columns     - Optional: the column to select (SELECT * FROM ...), defaults to *.
      * @param string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to OR.
      * @param string $order       - Optional: string holding the 'ORDER BY' clause.
      * @param string $limit       - Optional: string holding the 'LIMIT' clause.
-     * @param array  $dataTypes   - Optional: Pass in data types as an array in equal order to the $where.
-     *                            - Options: int/integer, bool/boolean, str/string.
-     *                            - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     * @param array $dataTypes    - Optional: Pass in data types as an array in equal order to the $where.
+     *                              - Options: int/integer, bool/boolean, str/string.
+     *                              - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     * @param string $dateColumn  - Optional: Date column in the table. Will only be used if $dates are passed in.
+     * @param array $dates        - Optional: Pass in to dates to limit the result to rows between two dates.
+     *                              - Time will default to 00:00:00 if its not provided.
+     *                              - Remember: Dates passed in have to be in the same format as the database.
+     *                              - For MySQL this is YYYY-MM-DD HH:II:SS. Lowest date have to be passed in first.
+     *                              - CORRECT: Array("2018-06-18 00:00:00", "2018-06-19 23:59:59");
+     *                              - INVALID: Array("2018-06-19 00:00:00", "2018-06-18 23:59:59");
      * @param string $returnType  - Optional: Choose data type to get returned result as.
-     *                            - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).
-     *                            - Remember to set $returnClass if class is chosen or return type will be set to object.
+     *                              - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).
+     *                              - Remember to set $returnClass if class is chosen or return type will be set to object.
      * @param string $returnClass - Optional: Class to return data as when class is chosen as $returnType.
      *
      * @return mixed              - Returns as object, class or array based on $returnType choice.
@@ -139,18 +158,22 @@ class Database
      *                      "ORDER BY ID ASC",
      *                      "LIMIT 20",
      *                      array("str", "str"),
+     *                      "DATE",
+     *                      "Array("2018-06-21 00:00:00", "2018-06-22 23:59:59")",
      *                      "Class",
      *                      "TestClass");
      */
     public function search(string $table, array $where=[], string $columns="*", string $whereMode="OR",
-                           string $order="", string $limit="", array $dataTypes=[], string $returnType="object",
-                           string $returnClass="")
+                           string $order="", string $limit = "", array $dataTypes=[], string $dateColumn="",
+                           array $dates=[], string $returnType="object", string $returnClass="")
     {
         $whereFormatted = $this->formatWhereLikeCondition($where, $whereMode);
+        $datesFormatted = $this->formatDates($where, $dateColumn, $dates);
 
-        $this->stmt = $this->connection->prepare("SELECT $columns FROM $table $whereFormatted $order $limit");
+        $this->stmt = $this->connection->prepare("SELECT $columns FROM $table $whereFormatted $datesFormatted $order $limit");
 
         $where = array_values($where);
+        $where = array_merge($where, $dates);
         $dataTypes = $this->setDataType($where, $dataTypes);
 
         foreach ($where as $key => $item) {
@@ -161,7 +184,7 @@ class Database
 
         $formattedReturnType = $this->formatReturnType($returnType, $returnClass);
 
-        if($formattedReturnType === PDO::FETCH_CLASS && !empty($returnClass)) {
+        if ($formattedReturnType === PDO::FETCH_CLASS && !empty($returnClass)) {
             return $this->stmt->fetchAll($formattedReturnType, $returnClass);
         } else {
             return $this->stmt->fetchAll($formattedReturnType);
@@ -172,10 +195,10 @@ class Database
      ******************************** Database Insert Method **********************************
      *
      * @param string $table       - Database Table.
-     * @param array  $columnsData - Array of columns and data to insert to the assign columns.
-     * @param array  $dataTypes   - Optional: Pass in data types as an array in equal order to $columnsData.
-     *                            - Options: int/integer, bool/boolean, str/string.
-     *                            - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     * @param array $columnsData  - Array of columns and data to insert to the assign columns.
+     * @param array $dataTypes    - Optional: Pass in data types as an array in equal order to $columnsData.
+     *                              - Options: int/integer, bool/boolean, str/string.
+     *                              - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
      *
      * @return boolean            - True = Success, False = Error.
      *
@@ -200,7 +223,7 @@ class Database
         }
 
         $result = $this->stmt->execute();
-        $this->lastInsertId = (int) $this->connection->lastInsertId();
+        $this->lastInsertId = (int)$this->connection->lastInsertId();
 
         return $result;
     }
@@ -210,12 +233,12 @@ class Database
      ******************************** Database Update Method **********************************
      *
      * @param string $table       - Database Table.
-     * @param array  $columnsData - Array of columns and data to insert to the assign columns.
-     * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
+     * @param array $columnsData  - Array of columns and data to insert to the assign columns.
+     * @param array $where        - Optional: Array holding the filters/'WHERE' clause for the query.
      * @param string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
-     * @param array  $dataTypes   - Optional: Pass in data types as an array in equal order to $columnsData.
-     *                            - Options: int/integer, bool/boolean, str/string.
-     *                            - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     * @param array $dataTypes    - Optional: Pass in data types as an array in equal order to $columnsData.
+     *                              - Options: int/integer, bool/boolean, str/string.
+     *                              - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
      *
      * @return boolean            - True = Success, False = Error.
      *
@@ -252,11 +275,11 @@ class Database
      ******************************** Database Delete Method **********************************
      *
      * @param string $table       - Database Table.
-     * @param array  $where       - Optional: Array holding the filters/'WHERE' clause for the query.
+     * @param array $where        - Optional: Array holding the filters/'WHERE' clause for the query.
      * @param string $whereMode   - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
-     * @param array  $dataTypes   - Optional: Pass in data types as an array in equal order to $where.
-     *                            - Options: int/integer, bool/boolean, str/string.
-     *                            - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     * @param array $dataTypes    - Optional: Pass in data types as an array in equal order to $where.
+     *                              - Options: int/integer, bool/boolean, str/string.
+     *                              - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
      *
      * @return boolean            - True = Success, False = Error.
      *
@@ -286,12 +309,12 @@ class Database
      ************************************ Get row count ***************************************
      *
      * @param string $table     - Database Table.
-     * @param array  $where     - Optional: Array holding the filters/'WHERE' clause for the query.
+     * @param array $where      - Optional: Array holding the filters/'WHERE' clause for the query.
      * @param string $whereMode - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
      * @param string $columns   - Optional: the column to select (SELECT count(*) FROM ...), defaults to *.
-     * @param array  $dataTypes - Optional: Pass in data types as an array in equal order to the $where.
-     *                          - Options: int/integer, bool/boolean, str/string.
-     *                          - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
+     * @param array $dataTypes  - Optional: Pass in data types as an array in equal order to the $where.
+     *                              - Options: int/integer, bool/boolean, str/string.
+     *                              - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
      *
      * @return integer          - Row count.
      *
@@ -302,7 +325,7 @@ class Database
      *                     "*",
      *                     Array("int", "str"));
      */
-    public function count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[])
+    public function count(string $table, Array $where=[], $whereMode = "AND", string $columns="*", Array $dataTypes=[])
     {
         $whereFormatted = $this->formatWhereCondition($where, $whereMode);
 
@@ -317,7 +340,7 @@ class Database
 
         $this->stmt->execute();
 
-        return (int) $this->stmt->fetchObject()->count;
+        return (int)$this->stmt->fetchObject()->count;
     }
 
     /**
@@ -339,7 +362,7 @@ class Database
      *
      * @example $db->sql();
      */
-    public function sql() 
+    public function sql()
     {
         return $this->stmt->debugDumpParams();
     }
@@ -348,10 +371,10 @@ class Database
      **************************** Close the database connection *******************************
      *
      * @return void
-     * 
+     *
      * @example $db->closeConnection();
      */
-    public function closeConnection() 
+    public function closeConnection()
     {
         $this->stmt->closeCursor();
         $this->stmt = null;
@@ -381,9 +404,9 @@ class Database
     /**
      ************* Helper method to append placeholders for prepared statements ***************
      *
-     * @param array $data  - Data to append placeholders to.
+     * @param array $data - Data to append placeholders to.
      *
-     * @return string      - String with placeholders appended. Format: "firstName=?, lastName=?"
+     * @return string     - String with placeholders appended. Format: "firstName=?, lastName=?"
      */
     private function appendPlaceholders(array $data)
     {
@@ -396,10 +419,10 @@ class Database
     /**
      ********************* Helper method to format the where condition ************************
      *
-     * @param array  $where      - Data to format the where condition on
-     * @param string $whereMode  - Add an 'AND' or 'OR' after each item in the $where array, defaults to AND
+     * @param array $where      - Data to format the where condition on
+     * @param string $whereMode - Add an 'AND' or 'OR' after each item in the $where array, defaults to AND
      *
-     * @return string            - String with placeholders appended. Format: "WHERE id=? AND username=?"
+     * @return string           - String with placeholders appended. Format: "WHERE (id=? AND username=?)"
      */
     private function formatWhereCondition(array $where, string $whereMode="AND")
     {
@@ -407,20 +430,20 @@ class Database
 
         $where = implode("=? $andOr ", array_keys($where));
 
-        if(!empty($where)) {
-            $where = "WHERE $where=?";
+        if (!empty($where)) {
+            $where = "WHERE ($where=?)";
         }
 
         return $where;
     }
-    
+
     /**
      ******************** Helper method to format the where like condition ********************
      *
-     * @param array  $where      - Data to format the where like condition on
-     * @param string $whereMode  - Add an 'AND' or 'OR' after each item in the $where array, defaults to OR
+     * @param array $where      - Data to format the where like condition on
+     * @param string $whereMode - Add an 'AND' or 'OR' after each item in the $where array, defaults to OR
      *
-     * @return string            - String with placeholders appended. Format: "WHERE id LIKE ? OR username LIKE ?"
+     * @return string           - String with placeholders appended. Format: "WHERE (id LIKE ? OR username LIKE ?)"
      */
     private function formatWhereLikeCondition(array $where, string $whereMode="OR")
     {
@@ -428,11 +451,34 @@ class Database
 
         $where = implode(" LIKE ? $andOr ", array_keys($where));
 
-        if(!empty($where)) {
-            $where = "WHERE $where LIKE ?";
+        if (!empty($where)) {
+            $where = "WHERE ($where LIKE ?)";
         }
 
         return $where;
+    }
+
+    /**
+     ********************* Helper method to format between dates condition ********************
+     *
+     * @param array $where       - Used to check if there is a where condition
+     * @param string $dateColumn - Used to check if a date column is set
+     * @param array $dates       - The two dates to add the between condition for
+     *
+     * @return string            - String with placeholders added in the between condition.
+     *                              - Format: "WHERE (DATE BETWEEN ? AND ?" or "AND (DATE BETWEEN ? AND ?)"
+     */
+    private function formatDates(array $where, string $dateColumn, array $dates=[])
+    {
+        if (!empty($dateColumn) && count($dates) === 2 && count($where) < 1) {
+            $formattedDates = "WHERE (" . $dateColumn . " BETWEEN  ?  AND  ?)";
+        } else if (!empty($dateColumn) && count($dates) === 2 && count($where) > 0) {
+            $formattedDates = "AND (" . $dateColumn . " BETWEEN ? AND ?)";
+        } else {
+            $formattedDates = "";
+        }
+
+        return $formattedDates;
     }
 
     /**
@@ -444,7 +490,7 @@ class Database
      *
      * @return string             - Data type value associated with PDO::FETCH_OBJ, PDO::FETCH_CLASS, PDO::FETCH_ASSOC.
      */
-    private function formatReturnType(string $returnType, string $returnClass) 
+    private function formatReturnType(string $returnType, string $returnClass)
     {
         switch (strtolower($returnType)) {
             case "object":
@@ -452,7 +498,7 @@ class Database
                 $returnType = PDO::FETCH_OBJ;
                 break;
             case "class":
-                if(!empty($returnClass)) {
+                if (!empty($returnClass)) {
                     $returnType = PDO::FETCH_CLASS;
                 } else {
                     $returnType = PDO::FETCH_OBJ;
