@@ -34,7 +34,7 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
 | | Options: int/integer, bool/boolean, str/string. |
 | | Data type will default to string if nothing is passed in (PDO::PARAM_STR). | 
 | string $dateColumn | Optional: Date column in the table. Will only be used if $dates are provided. |
-| array $dates | Optional: Pass in to dates to limit the result to rows between two dates. |
+| array $dates | Optional: Pass in two dates to limit the result to rows between two dates. |
 | | Time will default to 00:00:00 if its not provided. |
 | | Remember: Dates passed in have to be in the same format as the database. |
 | | For MySQL this is YYYY-MM-DD HH:II:SS. Lowest date have to be passed in first. |
@@ -71,7 +71,7 @@ $db->search(string $table, array $where=[], string $columns="*", string $whereMo
 | | Options: int/integer, bool/boolean, str/string. |
 | | Data type will default to string if nothing is passed in (PDO::PARAM_STR).|
 | string $dateColumn | Optional: Date column in the table. Will only be used if $dates are provided. |
-| array $dates | Optional: Pass in to dates to limit the result to rows between two dates. |
+| array $dates | Optional: Pass in two dates to limit the result to rows between two dates. |
 | | Time will default to 00:00:00 if its not provided. |
 | | Remember: Dates passed in have to be in the same format as the database. |
 | | For MySQL this is YYYY-MM-DD HH:II:SS. Lowest date have to be passed in first. |
