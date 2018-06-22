@@ -164,7 +164,7 @@ class Database
      *                      "TestClass");
      */
     public function search(string $table, array $where=[], string $columns="*", string $whereMode="OR",
-                           string $order="", string $limit = "", array $dataTypes=[], string $dateColumn="",
+                           string $order="", string $limit="", array $dataTypes=[], string $dateColumn="",
                            array $dates=[], string $returnType="object", string $returnClass="")
     {
         $whereFormatted = $this->formatWhereLikeCondition($where, $whereMode);
@@ -325,7 +325,7 @@ class Database
      *                     "*",
      *                     Array("int", "str"));
      */
-    public function count(string $table, Array $where=[], $whereMode = "AND", string $columns="*", Array $dataTypes=[])
+    public function count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[])
     {
         $whereFormatted = $this->formatWhereCondition($where, $whereMode);
 
