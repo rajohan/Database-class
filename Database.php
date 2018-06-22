@@ -150,7 +150,7 @@ class Database
      *
      * @return mixed              - Returns as object, class or array based on $returnType choice.
      *
-     * @example $db->select("users",
+     * @example $db->search("users",
      *                      array("lastName" => "%Johannessen%",
      *                            "firstName" => "%Raymond%"),
      *                      "*",
