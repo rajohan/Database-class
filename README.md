@@ -86,7 +86,7 @@ $db->search(string $table, array $where=[], string $columns="*", string $whereMo
 | return mixed       | Returns as object, class or array based on $returnType choice. |
 ##### Example:
 ```php
-$db->select("users", array("lastName" => "%Johannessen%", "firstName" => "%Raymond%"), "*", "OR", 
+$db->search("users", array("lastName" => "%Johannessen%", "firstName" => "%Raymond%"), "*", "OR", 
             "ORDER BY ID ASC", "LIMIT 5", array("str", "str", "str", "str"), "DATE", 
             "Array("2018-06-21 00:00:00", "2018-06-22 23:59:59")", "Class", "TestClass");
 ```
