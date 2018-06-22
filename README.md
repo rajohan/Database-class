@@ -1,4 +1,4 @@
-# Standard CRUD operations database handler
+# Standard CRUD operations database handler v1.3
 
 This is my Database class to make it easier to do standard CRUD database operations. It has support for selecting, searching, inserting, updating, deleting, get row count, get last inserted row's id and get last executed SQL statement. It comes with some nice functionality, such as automatic prepared statements with binding of all variables on every SQL query to protect the database from malicious code. You can also chose if you want the result when selecting to be returned as an object, class or an array
 
@@ -16,7 +16,7 @@ $db = new Database();
 ```
 ___
 ### Select
-##### Select rows from a database table
+##### Select rows from a database table [v1.0, updated in v1.3]
 ```php
 $db->select(string $table, array $where=[], string $columns="*", string $whereMode="AND", 
             string $order="",string $limit="", array $dataTypes=[], string $dateColumn="",
@@ -54,7 +54,7 @@ $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR",
 ```
 ___
 ### Search
-##### Search for match in column(s) in a database table
+##### Search for match in column(s) in a database table [v1.3]
 ```php
 $db->search(string $table, array $where=[], string $columns="*", string $whereMode="OR", 
             string $order="",string $limit="", array $dataTypes=[], string $dateColumn="",
@@ -92,7 +92,7 @@ $db->select("users", array("lastName" => "%Johannessen%", "firstName" => "%Raymo
 ```
 ___
 ### Insert
-##### Insert data into a database table
+##### Insert data into a database table [v1.0]
 ```php
 $db->insert(string $table, Array $columnsData, Array $dataTypes=[]);
 ```
@@ -115,7 +115,7 @@ $db->insert("users",
 ```
 ___
 ### Update
-##### Update one or more rows of a database table
+##### Update one or more rows of a database table [v1.0]
 ```php
 $db->update(string $table, array $columnsData, array $where=[], 
             string $whereMode="AND", Array $dataTypes=[]);
@@ -144,7 +144,7 @@ $db->update("users",
 ```
 ___
 ### Delete
-##### Remove one or more rows from a database table
+##### Remove one or more rows from a database table [v1.0]
 ```php
 $db->delete(string $table, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
 ```
@@ -168,7 +168,7 @@ $db->delete("users",
 ```
 ___
 ### Count
-##### Get row count from a database table
+##### Get row count from a database table [v1.0]
 ```php
 $db->count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[]);
 ```
@@ -194,19 +194,19 @@ $db->count("users",
 ```
 ___
 ### Id
-##### Last inserted row's id
+##### Last inserted row's id [v1.0]
 ```php
 $db->id();
 ```
 ___
 ### Sql
-##### Get last used query
+##### Get last used query [v1.0]
 ```php
 $db->sql();
 ```
 ___
 ### CloseConnection
-##### Close the database connection
+##### Close the database connection [v1.0]
 ```php
 $db->closeConnection();
 ```
