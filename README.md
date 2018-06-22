@@ -19,8 +19,8 @@ ___
 ##### Select rows from a database table
 ```php
 $db->select(string $table, array $where=[], string $columns="*", string $whereMode="AND", 
-            string $order="",string $limit="", array $dataTypes=[], string $returnType="object", 
-            string $returnClass="");
+            string $order="",string $limit="", array $dataTypes=[], string $dateColumn="",
+            array $dates=[], string $returnType="object", string $returnClass="");
 ```
 | Parameter | Description |
 |--|--|
@@ -49,15 +49,16 @@ $db->select(string $table, array $where=[], string $columns="*", string $whereMo
 ##### Example:
 ```php
 $db->select("users", array("id" => 55, "firstName" => "Raymond"), "*", "OR", 
-            "ORDER BY ID ASC", "LIMIT 5", array("int", "str"), "Class", "TestClass");
+            "ORDER BY ID ASC", "LIMIT 5", array("int", "str", "str", "str"), "DATE", 
+            "Array("2018-06-21 00:00:00", "2018-06-22 23:59:59")", "Class", "TestClass");
 ```
 ___
 ### Search
 ##### Search for match in column(s) in a database table
 ```php
 $db->search(string $table, array $where=[], string $columns="*", string $whereMode="OR", 
-            string $order="",string $limit="", array $dataTypes=[], string $returnType="object", 
-            string $returnClass="");
+            string $order="",string $limit="", array $dataTypes=[], string $dateColumn="",
+            array $dates=[], string $returnType="object", string $returnClass="");
 ```
 | Parameter | Description |
 |--|--|
@@ -86,7 +87,8 @@ $db->search(string $table, array $where=[], string $columns="*", string $whereMo
 ##### Example:
 ```php
 $db->select("users", array("lastName" => "%Johannessen%", "firstName" => "%Raymond%"), "*", "OR", 
-            "ORDER BY ID ASC", "LIMIT 5", array("str", "str"), "Class", "TestClass");
+            "ORDER BY ID ASC", "LIMIT 5", array("str", "str", "str", "str"), "DATE", 
+            "Array("2018-06-21 00:00:00", "2018-06-22 23:59:59")", "Class", "TestClass");
 ```
 ___
 ### Insert
