@@ -26,7 +26,6 @@
  * https://rajohan.no
  */
 
-
 declare(strict_types=1);
 
 class Database
