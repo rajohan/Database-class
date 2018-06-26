@@ -436,7 +436,15 @@ class Database
 
         return $data;
     }
-
+    
+    /**
+     ************************ Helper method to append table to columns ************************
+     *
+     * @param string $table   - Database table
+     * @param string $columns - Columns to append table to.
+     *
+     * @return string       - String with table appended. Format: "table.column1, table.column2"
+     */
     private function formatColumns(string $table, string $columns) {
         $columns = explode(",", $columns);
 
