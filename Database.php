@@ -336,7 +336,6 @@ class Database
      *                     Array("id" => 1,
      *                           "firstName" => "Raymond"),
      *                     "OR",
-     *                     "*",
      *                     Array("int", "str"));
      */
     public function count(string $table, Array $where=[], $whereMode="", Array $dataTypes=[])
