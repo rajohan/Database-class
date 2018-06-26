@@ -69,12 +69,12 @@ class Database
      *                              - Options: int/integer, bool/boolean, str/string.
      *                              - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
      * @param string $dateColumn  - Optional: Date column in the table. Will only be used if $dates are provided.
-     * @param array $dates        - Optional: Pass in to dates to limit the result to rows between two dates.
+     * @param array $dates        - Optional: Pass in two dates to limit the result to rows between two dates.
      *                              - Time will default to 00:00:00 if its not provided.
      *                              - Remember: Dates passed in have to be in the same format as the database.
      *                              - For MySQL this is YYYY-MM-DD HH:II:SS. Lowest date have to be passed in first.
-     *                              - CORRECT: Array("2018-06-18 00:00:00", "2018-06-19 23:59:59");
-     *                              - INVALID: Array("2018-06-19 00:00:00", "2018-06-18 23:59:59");
+     *                              - Correct: Array("2018-06-21 00:00:00", "2018-06-22 23:59:59");
+     *                              - Invalid: Array("2018-06-22 00:00:00", "2018-06-21 23:59:59");
      * @param string $returnType  - Optional: Choose data type to get returned result as.
      *                              - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).
      *                              - Remember to set $returnClass if class is chosen or return type will be set to object.
@@ -95,14 +95,20 @@ class Database
      *                      "Class",
      *                      "TestClass");
      */
-    public function select(string $table, array $where=[], string $columns="*", string $whereMode="AND",
+    public function select(string $table, array $where=[], string $columns="", string $whereMode="",
                            string $order="", string $limit="", array $dataTypes=[], string $dateColumn="",
-                           array $dates=[], string $returnType="object", string $returnClass="")
+                           array $dates=[], string $returnType="", string $returnClass="")
     {
-        $whereFormatted = $this->formatWhereCondition($where, $whereMode);
-        $datesFormatted = $this->formatDates($where, $dateColumn, $dates);
 
-        $this->stmt = $this->connection->prepare("SELECT $columns FROM $table $whereFormatted $datesFormatted $order $limit");
+        $columns = empty($columns) ? "*" : $columns;
+        $whereMode = empty($whereMode) ? "AND" : $whereMode;
+        $returnType = empty($returnType) ? "object" : $returnType;
+
+        $whereFormatted = $this->formatWhereCondition($table, $where, $whereMode);
+        $datesFormatted = $this->formatDates($table, $where, $dateColumn, $dates);
+        $formattedColumns = $this->formatColumns($table, $columns);
+
+        $this->stmt = $this->connection->prepare("SELECT $formattedColumns FROM $table $whereFormatted $datesFormatted $order $limit");
 
         $where = array_values($where);
         $where = array_merge($where, $dates);
@@ -137,12 +143,12 @@ class Database
      *                              - Options: int/integer, bool/boolean, str/string.
      *                              - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
      * @param string $dateColumn  - Optional: Date column in the table. Will only be used if $dates are passed in.
-     * @param array $dates        - Optional: Pass in to dates to limit the result to rows between two dates.
+     * @param array $dates        - Optional: Pass in two dates to limit the result to rows between two dates.
      *                              - Time will default to 00:00:00 if its not provided.
      *                              - Remember: Dates passed in have to be in the same format as the database.
      *                              - For MySQL this is YYYY-MM-DD HH:II:SS. Lowest date have to be passed in first.
-     *                              - CORRECT: Array("2018-06-18 00:00:00", "2018-06-19 23:59:59");
-     *                              - INVALID: Array("2018-06-19 00:00:00", "2018-06-18 23:59:59");
+     *                              - Correct: Array("2018-06-21 00:00:00", "2018-06-22 23:59:59");
+     *                              - Invalid: Array("2018-06-22 00:00:00", "2018-06-21 23:59:59");
      * @param string $returnType  - Optional: Choose data type to get returned result as.
      *                              - Options: obj/object, class, array/arr/assoc. Defaults to object (PDO::FETCH_OBJ).
      *                              - Remember to set $returnClass if class is chosen or return type will be set to object.
@@ -163,14 +169,19 @@ class Database
      *                      "Class",
      *                      "TestClass");
      */
-    public function search(string $table, array $where=[], string $columns="*", string $whereMode="OR",
+    public function search(string $table, array $where=[], string $columns="", string $whereMode="",
                            string $order="", string $limit="", array $dataTypes=[], string $dateColumn="",
-                           array $dates=[], string $returnType="object", string $returnClass="")
+                           array $dates=[], string $returnType="", string $returnClass="")
     {
-        $whereFormatted = $this->formatWhereLikeCondition($where, $whereMode);
-        $datesFormatted = $this->formatDates($where, $dateColumn, $dates);
+        $columns = empty($columns) ? "*" : $columns;
+        $whereMode = empty($whereMode) ? "OR" : $whereMode;
+        $returnType = empty($returnType) ? "object" : $returnType;
 
-        $this->stmt = $this->connection->prepare("SELECT $columns FROM $table $whereFormatted $datesFormatted $order $limit");
+        $whereFormatted = $this->formatWhereLikeCondition($table, $where, $whereMode);
+        $datesFormatted = $this->formatDates($table, $where, $dateColumn, $dates);
+        $formattedColumns = $this->formatColumns($table, $columns);
+
+        $this->stmt = $this->connection->prepare("SELECT $formattedColumns FROM $table $whereFormatted $datesFormatted $order $limit");
 
         $where = array_values($where);
         $where = array_merge($where, $dates);
@@ -211,9 +222,10 @@ class Database
     public function insert(string $table, Array $columnsData, Array $dataTypes=[])
     {
         $placeholders = $this->generatePlaceholders($columnsData);
-        $columns = implode(", ", array_keys($columnsData));
+        $columns = implode(",", array_keys($columnsData));
+        $formattedColumns = $this->formatColumns($table, $columns);
 
-        $this->stmt = $this->connection->prepare("INSERT INTO $table ($columns) VALUES ($placeholders)");
+        $this->stmt = $this->connection->prepare("INSERT INTO $table ($formattedColumns) VALUES ($placeholders)");
 
         $columnsData = array_values($columnsData);
         $dataTypes = $this->setDataType($columnsData, $dataTypes);
@@ -251,10 +263,12 @@ class Database
      *                      "OR",
      *                      Array("str", "str", "str", "int", "str"));
      */
-    public function update(string $table, array $columnsData, array $where=[], string $whereMode="AND", Array $dataTypes=[])
+    public function update(string $table, array $columnsData, array $where=[], string $whereMode="", Array $dataTypes=[])
     {
-        $columns = $this->appendPlaceholders($columnsData);
-        $whereFormatted = $this->formatWhereCondition($where, $whereMode);
+        $whereMode = empty($whereMode) ? "AND" : $whereMode;
+
+        $columns = $this->appendPlaceholders($table, $columnsData);
+        $whereFormatted = $this->formatWhereCondition($table, $where, $whereMode);
 
         $this->stmt = $this->connection->prepare("UPDATE $table SET $columns $whereFormatted");
 
@@ -289,9 +303,10 @@ class Database
      *                      "OR",
      *                      Array("int", "str"));
      */
-    public function delete(string $table, array $where=[], string $whereMode="AND", Array $dataTypes=[])
+    public function delete(string $table, array $where=[], string $whereMode="", Array $dataTypes=[])
     {
-        $whereFormatted = $this->formatWhereCondition($where, $whereMode);
+        $whereMode = empty($whereMode) ? "AND" : $whereMode;
+        $whereFormatted = $this->formatWhereCondition($table, $where, $whereMode);
 
         $this->stmt = $this->connection->prepare("DELETE FROM $table $whereFormatted");
 
@@ -311,7 +326,6 @@ class Database
      * @param string $table     - Database Table.
      * @param array $where      - Optional: Array holding the filters/'WHERE' clause for the query.
      * @param string $whereMode - Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND.
-     * @param string $columns   - Optional: the column to select (SELECT count(*) FROM ...), defaults to *.
      * @param array $dataTypes  - Optional: Pass in data types as an array in equal order to the $where.
      *                              - Options: int/integer, bool/boolean, str/string.
      *                              - Data type will default to string if nothing is passed in (PDO::PARAM_STR).
@@ -325,11 +339,13 @@ class Database
      *                     "*",
      *                     Array("int", "str"));
      */
-    public function count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[])
+    public function count(string $table, Array $where=[], $whereMode="", Array $dataTypes=[])
     {
-        $whereFormatted = $this->formatWhereCondition($where, $whereMode);
+        $whereMode = empty($whereMode) ? "AND" : $whereMode;
 
-        $this->stmt = $this->connection->prepare("SELECT count($columns) AS `count` FROM $table $whereFormatted");
+        $whereFormatted = $this->formatWhereCondition($table, $where, $whereMode);
+
+        $this->stmt = $this->connection->prepare("SELECT count(*) AS `count` FROM $table $whereFormatted");
 
         $where = array_values($where);
         $dataTypes = $this->setDataType($where, $dataTypes);
@@ -404,29 +420,51 @@ class Database
     /**
      ************* Helper method to append placeholders for prepared statements ***************
      *
-     * @param array $data - Data to append placeholders to.
+     * @param string $table - Database table
+     * @param array $data   - Data to append placeholders to.
      *
-     * @return string     - String with placeholders appended. Format: "firstName=?, lastName=?"
+     * @return string       - String with placeholders appended. Format: "firstName=?, lastName=?"
      */
-    private function appendPlaceholders(array $data)
+    private function appendPlaceholders(string $table, array $data)
     {
+        foreach ($data as $key => $value) {
+            $data[$table . "." . $key] = $value;
+            unset($data[$key]);
+        }
+
         $data = implode("=?, ", array_keys($data));
         $data .= "=?";
 
         return $data;
     }
 
+    private function formatColumns(string $table, string $columns) {
+        $columns = explode(",", $columns);
+
+        foreach ($columns as $key => $column) {
+            $columns[$key] = $table . "." . $column;
+        }
+
+        return implode(",", $columns);
+    }
+
     /**
      ********************* Helper method to format the where condition ************************
      *
+     * @param string $table     - Database table
      * @param array $where      - Data to format the where condition on
      * @param string $whereMode - Add an 'AND' or 'OR' after each item in the $where array, defaults to AND
      *
      * @return string           - String with placeholders appended. Format: "WHERE (id=? AND username=?)"
      */
-    private function formatWhereCondition(array $where, string $whereMode="AND")
+    private function formatWhereCondition(string $table, array $where, string $whereMode="AND")
     {
         $andOr = $whereMode === "OR" ? "OR" : "AND";
+
+        foreach ($where as $key => $value) {
+            $where[$table . "." . $key] = $value;
+            unset($where[$key]);
+        }
 
         $where = implode("=? $andOr ", array_keys($where));
 
@@ -440,14 +478,20 @@ class Database
     /**
      ******************** Helper method to format the where like condition ********************
      *
+     * @param string $table     - Database table
      * @param array $where      - Data to format the where like condition on
      * @param string $whereMode - Add an 'AND' or 'OR' after each item in the $where array, defaults to OR
      *
      * @return string           - String with placeholders appended. Format: "WHERE (id LIKE ? OR username LIKE ?)"
      */
-    private function formatWhereLikeCondition(array $where, string $whereMode="OR")
+    private function formatWhereLikeCondition(string $table, array $where, string $whereMode="OR")
     {
         $andOr = $whereMode === "OR" ? "OR" : "AND";
+
+        foreach ($where as $key => $value) {
+            $where[$table . "." . $key] = $value;
+            unset($where[$key]);
+        }
 
         $where = implode(" LIKE ? $andOr ", array_keys($where));
 
@@ -461,6 +505,7 @@ class Database
     /**
      ********************* Helper method to format between dates condition ********************
      *
+     * @param string $table      - Database table
      * @param array $where       - Used to check if there is a where condition
      * @param string $dateColumn - Used to check if a date column is set
      * @param array $dates       - The two dates to add the between condition for
@@ -468,12 +513,12 @@ class Database
      * @return string            - String with placeholders added in the between condition.
      *                              - Format: "WHERE (DATE BETWEEN ? AND ?" or "AND (DATE BETWEEN ? AND ?)"
      */
-    private function formatDates(array $where, string $dateColumn, array $dates=[])
+    private function formatDates(string $table, array $where, string $dateColumn, array $dates=[])
     {
         if (!empty($dateColumn) && count($dates) === 2 && count($where) < 1) {
-            $formattedDates = "WHERE (" . $dateColumn . " BETWEEN  ?  AND  ?)";
+            $formattedDates = "WHERE (" . $table . "." . $dateColumn . " BETWEEN  ?  AND  ?)";
         } else if (!empty($dateColumn) && count($dates) === 2 && count($where) > 0) {
-            $formattedDates = "AND (" . $dateColumn . " BETWEEN ? AND ?)";
+            $formattedDates = "AND (" . $table . "." . $dateColumn . " BETWEEN ? AND ?)";
         } else {
             $formattedDates = "";
         }
