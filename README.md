@@ -170,7 +170,7 @@ ___
 ### Count
 ##### Get row count from a database table [v1.0]
 ```php
-$db->count(string $table, Array $where=[], $whereMode="AND", string $columns="*", Array $dataTypes=[]);
+$db->count(string $table, Array $where=[], $whereMode="AND", Array $dataTypes=[]);
 ```
 | Parameter | Description |
 |--|--|
