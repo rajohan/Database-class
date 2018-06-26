@@ -18,9 +18,9 @@ ___
 ### Select
 ##### Select rows from a database table [v1.0, updated in v1.3]
 ```php
-$db->select(string $table, array $where=[], string $columns="*", string $whereMode="AND", 
+$db->select(string $table, array $where=[], string $columns="", string $whereMode="", 
             string $order="",string $limit="", array $dataTypes=[], string $dateColumn="",
-            array $dates=[], string $returnType="object", string $returnClass="");
+            array $dates=[], string $returnType="", string $returnClass="");
 ```
 | Parameter | Description |
 |--|--|
@@ -56,9 +56,9 @@ ___
 ### Search
 ##### Search for match in column(s) in a database table [v1.3]
 ```php
-$db->search(string $table, array $where=[], string $columns="*", string $whereMode="OR", 
+$db->search(string $table, array $where=[], string $columns="", string $whereMode="", 
             string $order="",string $limit="", array $dataTypes=[], string $dateColumn="",
-            array $dates=[], string $returnType="object", string $returnClass="");
+            array $dates=[], string $returnType="", string $returnClass="");
 ```
 | Parameter | Description |
 |--|--|
@@ -118,7 +118,7 @@ ___
 ##### Update one or more rows of a database table [v1.0]
 ```php
 $db->update(string $table, array $columnsData, array $where=[], 
-            string $whereMode="AND", Array $dataTypes=[]);
+            string $whereMode="", Array $dataTypes=[]);
 ```
 | Parameter | Description |
 |--|--|
@@ -146,7 +146,7 @@ ___
 ### Delete
 ##### Remove one or more rows from a database table [v1.0]
 ```php
-$db->delete(string $table, array $where=[], string $whereMode="AND", Array $dataTypes=[]);
+$db->delete(string $table, array $where=[], string $whereMode="", Array $dataTypes=[]);
 ```
 | Parameter | Description |
 |--|--|
@@ -170,7 +170,7 @@ ___
 ### Count
 ##### Get row count from a database table [v1.0]
 ```php
-$db->count(string $table, Array $where=[], $whereMode="AND", Array $dataTypes=[]);
+$db->count(string $table, Array $where=[], $whereMode="", Array $dataTypes=[]);
 ```
 | Parameter | Description |
 |--|--|
