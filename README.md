@@ -177,7 +177,6 @@ $db->count(string $table, Array $where=[], $whereMode="AND", string $columns="*"
 | string $table | Database Table. |
 | array  $where | Optional: Array holding the filters/'WHERE' clause for the query. |
 | string $whereMode | Optional: Add an 'AND' or 'OR' after each item in the $where array, defaults to AND. |
-| string $columns | Optional: the column to select (SELECT count(*) FROM ...), defaults to *. |
 | array  $dataTypes | Optional: Pass in data types as an array in equal order to the $where. |
 | | Options: int/integer, bool/boolean, str/string. |
 | | Data type will default to string if nothing is passed in (PDO::PARAM_STR). |
@@ -189,7 +188,6 @@ $db->count("users",
            Array("id" => 1,
            "firstName" => "Raymond"),
            "OR",
-           "*",
            Array("int", "str"));
 ```
 ___
