@@ -445,7 +445,8 @@ class Database
      *
      * @return string       - String with table appended. Format: "table.column1, table.column2"
      */
-    private function formatColumns(string $table, string $columns) {
+    private function formatColumns(string $table, string $columns) 
+    {
         $columns = explode(",", $columns);
 
         foreach ($columns as $key => $column) {
